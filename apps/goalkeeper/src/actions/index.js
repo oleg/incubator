@@ -18,20 +18,19 @@ export function fetchGoals() {
 }
 
 
-let _id = 1;
-export function uniqueId() {
-    return _id++;
+function createGoalSucceeded(goal) {
+    return {
+        type: 'CREATE_GOAL_SUCCEEDED',
+        payload: {
+            goal
+        }
+    }
 }
 
-
 export function createGoal({goalName, percentComplete}) {
-    return {
-        type: 'CREATE_GOAL',
-        payload: {
-            id: uniqueId(),
-            goalName,
-            percentComplete,
-            epic: 'other'
-        },
+    return dispatch => {
+        api.createGoal({goalName, percentComplete}).then(resp => {
+            dispatch(createGoalSucceeded(resp.data))
+        })
     };
 }

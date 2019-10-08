@@ -15,6 +15,7 @@
     "redux-devtools-extension": "^2.13.8"
   },
   "scripts": {
+    "start-db": "json-server --watch db.json --port 3001",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -28,5 +29,8 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "json-server": "^0.15.1"
+  }
 }

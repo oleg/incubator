@@ -1,4 +1,103 @@
 {
+  "users": [
+    {
+      "id": 1,
+      "name": "oleg"
+    },
+    {
+      "id": 2,
+      "name": "evgeniia"
+    }
+  ],
+  "units": [
+    {
+      "id": 1,
+      "name": "Great Course video lecture (30 min)",
+      "hoursConverter": 0.5
+    },
+    {
+      "id": 2,
+      "name": "page",
+      "hoursConverter": 0.02
+    }
+  ],
+  "resourceTypes": [
+    {
+      "id": 1,
+      "name": "Book"
+    },
+    {
+      "id": 2,
+      "name": "Lecture"
+    }
+  ],
+  "resources": [
+    {
+      "id": 1,
+      "userId": 1,
+      "resourceTypeId": 1,
+      "title": "Effective Java",
+      "unitId": 2,
+      "size": 350,
+      "defaultTags": [
+        "java",
+        "clean code"
+      ]
+    },
+    {
+      "id": 2,
+      "userId": 1,
+      "resourceTypeId": 2,
+      "title": "English Language",
+      "unitId": 1,
+      "size": 12,
+      "defaultTags": [
+        "english",
+        "languages"
+      ]
+    }
+  ],
+  "works": [
+    {
+      "id": 1,
+      "date": "2019-10-08",
+      "resourceId": 1,
+      "durationMin": 20,
+      "increment": 10,
+      "tags": [
+        "java"
+      ]
+    },
+    {
+      "id": 2,
+      "date": "2019-10-09",
+      "resourceId": 1,
+      "durationMin": 30,
+      "increment": 20,
+      "tags": [
+        "java"
+      ]
+    }
+  ],
+  "progressBars": [
+    {
+      "resourceId": 1,
+      "doneUnits": 30,
+      "donePercents": 5,
+      "spentMin": 50,
+      "speed": 4.3,
+      "estimationCompleteDate": "2019-11-11"
+    },
+    {
+      "resourceId": 2,
+      "doneUnits": 0,
+      "donePercents": 0,
+      "spentMin": 0,
+      "speed": 0,
+      "estimationCompleteDate": "2030-01-01"
+    }
+  ],
+
   "goals": [
     {
       "id": 1,
@@ -62,6 +161,21 @@
       "epic": "Programming",
       "goalName": "Jenkins 2: Up and Running",
       "percentComplete": 44
+    },
+    {
+      "goalName": "my new goal",
+      "percentComplete": 7,
+      "id": 10
+    },
+    {
+      "goalName": "asdfasdf",
+      "percentComplete": 12,
+      "id": 11
+    },
+    {
+      "goalName": "1adfaf",
+      "percentComplete": 16,
+      "id": 12
     }
   ]
 }

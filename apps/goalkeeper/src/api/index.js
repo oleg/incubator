@@ -12,3 +12,8 @@ const client = axios.create({
 export function fetchGoals() {
     return client.get('/goals');
 }
+
+export function createGoal(params) {
+    return client.post('/goals', params);
+}
+
