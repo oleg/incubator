@@ -9,11 +9,11 @@ const client = axios.create({
     }
 });
 
-export function fetchGoals() {
-    return client.get('/goals');
+export function fetchTasks() {
+    return client.get('/tasks');
 }
 
-export function createGoal(params) {
-    return client.post('/goals', params);
+export function createTask(params) {
+    return client.post('/tasks', params);
 }
 

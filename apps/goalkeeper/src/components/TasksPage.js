@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
-import {Button, Col, Collapse, Row, UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem} from 'reactstrap';
-import Goal from "./Goal"
+import {Button, Col, Collapse, DropdownItem, DropdownMenu, DropdownToggle, Row, UncontrolledDropdown} from 'reactstrap';
+import Task from "./Task"
 
-class GoalsPage extends Component {
+class TasksPage extends Component {
     constructor(props) {
         super(props)
-        this.state = GoalsPage.newEmptyForm()
+        this.state = TasksPage.newEmptyForm()
     }
 
     static newEmptyForm() {
@@ -27,12 +27,12 @@ class GoalsPage extends Component {
     }
 
     resetForm() {
-        this.setState(GoalsPage.newEmptyForm());
+        this.setState(TasksPage.newEmptyForm());
     }
 
-    onCreateGoal = (e) => {
+    onCreateTask = (e) => {
         e.preventDefault();
-        this.props.onCreateGoal({
+        this.props.onCreateTask({
             goalName: this.state.goalName,
             percentComplete: this.state.percentComplete,
         })
@@ -53,7 +53,7 @@ class GoalsPage extends Component {
 
     render() {
         const byName = function (a, b) {
-            return a.goalName.toUpperCase().localeCompare(b.goalName.toUpperCase())
+            return a.title.toUpperCase().localeCompare(b.title.toUpperCase())
         }
         const byPercent = function (a, b) {
             return a.percentComplete - b.percentComplete;
@@ -75,6 +75,7 @@ class GoalsPage extends Component {
 
         return (
             <div>
+
                 <UncontrolledDropdown>
                     <DropdownToggle size="sm" caret>Sort by: {this.state.orderBy}</DropdownToggle>
                     <DropdownMenu>
@@ -84,21 +85,25 @@ class GoalsPage extends Component {
                         <DropdownItem onClick={this.changeOrderBy}>Started</DropdownItem>
                     </DropdownMenu>
                 </UncontrolledDropdown>
-                {this.props.goals
+
+                {
+                    this.props.tasks
                     .sort((a, b) => this.state.direction === 'Down' ? sortFunc(a, b): sortFunc(b,a))
-                    .map(g => <Goal key={g.goalName} {...g} />)}
-                <Row><Col>
-                    <Button color="primary" onClick={this.toggleForm}>Add Goal</Button>
-                    <Collapse isOpen={this.state.showNewGoalForm}>
-                        <form className="AddGoal" onSubmit={this.onCreateGoal}>
-                            <input type="text" onChange={this.onGoalNameChange} value={this.state.goalName}
-                                   placeholder="Goal Name"/>
-                            <input type="text" onChange={this.onPercentCompleteChange}
-                                   value={this.state.percentComplete} placeholder="Percent Complete"/>
-                            <button type="submit">Add</button>
-                        </form>
-                    </Collapse>
-                </Col></Row>
+                    .map(g => <Task key={g.title} {...g} />)
+                }
+                <Row>
+                    <Col>
+                        <Button color="primary" onClick={this.toggleForm}>Add Task</Button>
+                        <Collapse isOpen={this.state.showNewGoalForm}>
+                            <form className="AddGoal" onSubmit={this.onCreateTask}>
+                                <input type="text" onChange={this.onGoalNameChange} value={this.state.goalName} placeholder="Goal Name"/>
+                                <input type="text" onChange={this.onPercentCompleteChange} value={this.state.percentComplete} placeholder="Percent Complete"/>
+                                <button type="submit">Add</button>
+                            </form>
+                        </Collapse>
+                    </Col>
+                </Row>
+
             </div>
         );
     }
@@ -109,4 +114,4 @@ class GoalsPage extends Component {
 //     percentComplete: PropTypes.number.isRequired,
 // };
 
-export default GoalsPage;
+export default TasksPage;

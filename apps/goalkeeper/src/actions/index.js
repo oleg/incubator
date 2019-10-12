@@ -1,36 +1,36 @@
 import * as api from '../api';
 
-export function fetchGoalsSucceeded(goals) {
+export function fetchTasksSucceeded(tasks) {
     return {
-        type: 'FETCH_GOALS_SUCCEEDED',
+        type: 'FETCH_TASKS_SUCCEEDED',
         payload: {
-            goals
+            tasks
         }
     }
 }
 
-export function fetchGoals() {
+export function fetchTasks() {
     return dispatch => {
-        api.fetchGoals().then(resp => {
-            dispatch(fetchGoalsSucceeded(resp.data))
+        api.fetchTasks().then(resp => {
+            dispatch(fetchTasksSucceeded(resp.data))
         })
     }
 }
 
 
-function createGoalSucceeded(goal) {
+function createTaskSucceeded(task) {
     return {
-        type: 'CREATE_GOAL_SUCCEEDED',
+        type: 'CREATE_TASK_SUCCEEDED',
         payload: {
-            goal
+            task
         }
     }
 }
 
-export function createGoal({goalName, percentComplete}) {
+export function createTask({taskName, percentComplete}) {
     return dispatch => {
-        api.createGoal({goalName, percentComplete}).then(resp => {
-            dispatch(createGoalSucceeded(resp.data))
+        api.createTask({taskName, percentComplete}).then(resp => {
+            dispatch(createTaskSucceeded(resp.data))
         })
     };
 }

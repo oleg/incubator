@@ -7,11 +7,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import {applyMiddleware, createStore} from 'redux';
 import {Provider} from 'react-redux';
 import thunk from 'redux-thunk';
-import goals from './reducers';
+import tasks from './reducers';
 import { composeWithDevTools } from 'redux-devtools-extension';
 
 const store = createStore(
-    goals,
+    tasks,
     composeWithDevTools(applyMiddleware(thunk))
 );
 ReactDOM.render(<Provider store={store}><App /></Provider>, document.getElementById('root'));

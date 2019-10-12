@@ -1,13 +1,13 @@
-export default function goals(state = {goals: []}, action) {
+export default function tasks(state = {tasks: []}, action) {
     switch (action.type) {
-        case 'FETCH_GOALS_SUCCEEDED': {
+        case 'FETCH_TASKS_SUCCEEDED': {
             return {
-                goals: action.payload.goals
+                tasks: action.payload.tasks
             };
         }
-        case 'CREATE_GOAL_SUCCEEDED' : {
+        case 'CREATE_TASK_SUCCEEDED' : {
             return {
-                goals: state.goals.concat(action.payload.goal),
+                tasks: state.tasks.concat(action.payload.task),
             };
         }
         default: {

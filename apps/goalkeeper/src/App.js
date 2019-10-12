@@ -1,27 +1,25 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Container, Nav, NavItem, NavLink} from 'reactstrap';
-import GoalsPage from './components/GoalsPage'
-import {createGoal, fetchGoals} from './actions';
+import TasksPage from './components/TasksPage'
+import {createTask, fetchTasks} from './actions';
 
 class App extends Component {
     componentDidMount() {
-        this.props.dispatch(fetchGoals())
+        this.props.dispatch(fetchTasks())
     }
 
-    onCreateGoal = ({goalName, percentComplete}) => {
-        this.props.dispatch(createGoal({goalName, percentComplete}));
+    onCreateTask = ({taskName, percentComplete}) => {
+        this.props.dispatch(createTask({taskName, percentComplete}));
     }
 
     render() {
         return (
             <Container>
                 <Nav>
-                    <NavItem><NavLink href="#">page1</NavLink></NavItem>
-                    <NavItem><NavLink href="#">page2</NavLink></NavItem>
-                    <NavItem><NavLink href="#">page3</NavLink></NavItem>
+                    <NavItem><NavLink href="#">Home</NavLink></NavItem>
                 </Nav>
-                <GoalsPage goals={this.props.goals} onCreateGoal={this.onCreateGoal}/>
+                <TasksPage tasks={this.props.tasks} onCreateTask={this.onCreateTask}/>
             </Container>
         );
     }
@@ -29,7 +27,7 @@ class App extends Component {
 
 function mapStateToProps(state) {
     return {
-        goals: state.goals
+        tasks: state.tasks
     }
 }
 
