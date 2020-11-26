@@ -8,22 +8,25 @@ import (
 	"mazes/maze"
 )
 
-var ww = 4
+var pw = 4
+var ww = 1
+
+var red color.Color = color.RGBA{R: 255, A: 255}
+var black color.Color = color.Black
 
 //todo refactor
 //todo pass options?
 func ToPng(grid *maze.Grid, wr io.Writer) error {
-	w := grid.Width * 5
-	h := grid.Height * 5
+	w := grid.Width * (pw + ww*2)
+	h := grid.Height * (pw + ww*2)
 	img := image.NewRGBA(image.Rect(0, 0, w, h))
 
-	grid.EachRow(func(n int, row []*maze.Cell) {
-		v := n * ww
-		if n == 0 {
-			renderTop(grid, row, v+0, img)
+	grid.EachRow(func(y int, row []*maze.Cell) {
+		if y == 0 {
+			renderTop(grid, row, y*pw, img)
 		}
-		renderMiddle(grid, row, v, img)
-		renderBottom(grid, row, v+ww, img)
+		renderMiddle(grid, row, y*pw+(ww-1)+(ww-1)*y, img)
+		renderBottom(grid, row, y*pw+pw+(ww-1)+(ww-1)*y, img)
 	})
 
 	err := png.Encode(wr, img)
@@ -33,42 +36,51 @@ func ToPng(grid *maze.Grid, wr io.Writer) error {
 	return nil
 }
 
-func renderTop(grid *maze.Grid, row []*maze.Cell, n int, img *image.RGBA) {
-	img.Set(0, n, color.Black)
+func renderTop(grid *maze.Grid, row []*maze.Cell, y int, img *image.RGBA) {
+	for a := 0; a < ww; a++ {
+		img.Set(0, y+a, black)
+	}
 	for i, cell := range row {
-		y := i * ww
 		if !cell.Linked(grid.North(cell)) {
-			img.Set(y+1, n, color.Black)
-			img.Set(y+2, n, color.Black)
-			img.Set(y+3, n, color.Black)
+			for a := 0; a < ww; a++ {
+				img.Set(pw*i+1, y+a, black)
+				img.Set(pw*i+2, y+a, black)
+				img.Set(pw*i+3, y+a, black)
+			}
 		}
-		img.Set(y+ww, n, color.Black)
+		for a := 0; a < ww; a++ {
+			img.Set(i*pw+pw, y+a, black)
+		}
 	}
 }
 
-func renderBottom(grid *maze.Grid, row []*maze.Cell, n int, img *image.RGBA) {
-	img.Set(0, n, color.Black)
+func renderBottom(grid *maze.Grid, row []*maze.Cell, y int, img *image.RGBA) {
+	for a := 0; a < ww; a++ {
+		img.Set(0, y+a, black)
+	}
 	for i, cell := range row {
-		y := i * ww
 		if !cell.Linked(grid.South(cell)) {
-			img.Set(y+1, n, color.Black)
-			img.Set(y+2, n, color.Black)
-			img.Set(y+3, n, color.Black)
+			for a := 0; a < ww; a++ {
+				img.Set(i*pw+1, y+a, black)
+				img.Set(i*pw+2, y+a, black)
+				img.Set(i*pw+3, y+a, black)
+			}
 		}
-		img.Set(y+ww, n, color.Black)
+		for a := 0; a < ww; a++ {
+			img.Set(i*pw+pw, y+a, black)
+		}
 	}
 }
-func renderMiddle(grid *maze.Grid, row []*maze.Cell, n int, img *image.RGBA) {
-	img.Set(0, n+1, color.Black)
-	img.Set(0, n+2, color.Black)
-	img.Set(0, n+3, color.Black)
+func renderMiddle(grid *maze.Grid, row []*maze.Cell, y int, img *image.RGBA) {
+	img.Set(0, y+1, red)
+	img.Set(0, y+2, red)
+	img.Set(0, y+3, red)
 
 	for i, cell := range row {
 		if !cell.Linked(grid.East(cell)) {
-			v := i*ww + ww
-			img.Set(v, n+1, color.Black)
-			img.Set(v, n+2, color.Black)
-			img.Set(v, n+3, color.Black)
+			img.Set(i*pw+pw, y+1, red)
+			img.Set(i*pw+pw, y+2, red)
+			img.Set(i*pw+pw, y+3, red)
 		}
 	}
 
