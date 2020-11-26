@@ -11,9 +11,13 @@ import (
 var pw = 3
 var ww = 1
 
-var top color.Color = color.Black    // color.RGBA{R: 150, A: 255}
-var middle color.Color = color.Black //color.RGBA{G: 150, A: 255}
-var bottom color.Color = color.Black //color.RGBA{B: 150, A: 255}
+//var top color.Color = color.RGBA{R: 150, A: 255}
+//var middle color.Color = color.RGBA{G: 150, A: 255}
+//var bottom color.Color = color.RGBA{B: 150, A: 255}
+
+var top color.Color =    color.Black
+var middle color.Color = color.Black
+var bottom color.Color = color.Black
 
 //todo refactor
 //todo pass options?
@@ -26,7 +30,7 @@ func ToPng(grid *maze.Grid, wr io.Writer) error {
 		if y == 0 {
 			renderTop(grid, row, 0, img)
 		}
-		renderMiddle(grid, row, y*pw+y*ww, img)
+		renderMiddle(grid, row, y*pw+y*ww+ww, img)
 		renderBottom(grid, row, y*pw+pw+y*ww+ww, img)
 	})
 
@@ -39,49 +43,60 @@ func ToPng(grid *maze.Grid, wr io.Writer) error {
 
 func renderTop(grid *maze.Grid, row []*maze.Cell, y int, img *image.RGBA) {
 	for a := 0; a < ww; a++ {
-		img.Set(0, y+a, top)
+		for b := 0; b < ww; b++ {
+			img.Set(b, y+a, color.Black)
+		}
 	}
 	for i, cell := range row {
 		if !cell.Linked(grid.North(cell)) {
 			for a := 0; a < ww; a++ {
-				img.Set(pw*i+ww*i+1, y+a, top)
-				img.Set(pw*i+ww*i+2, y+a, top)
-				img.Set(pw*i+ww*i+3, y+a, top)
+				img.Set(pw*i+ww*i+ww+0, y+a, top)
+				img.Set(pw*i+ww*i+ww+1, y+a, top)
+				img.Set(pw*i+ww*i+ww+2, y+a, top)
 			}
 		}
 		for a := 0; a < ww; a++ {
-			img.Set(i*pw+pw+i*ww+ww, y+a, top)
+			for b := 0; b < ww; b++ {
+				img.Set((i*pw+pw)+(i*ww+ww)+b, y+a, color.Black)
+			}
 		}
 	}
 }
 
 func renderBottom(grid *maze.Grid, row []*maze.Cell, y int, img *image.RGBA) {
 	for a := 0; a < ww; a++ {
-		img.Set(0, y+a, bottom)
+		for b := 0; b < ww; b++ {
+			img.Set(b, y+a, color.Black)
+		}
 	}
 	for i, cell := range row {
 		if !cell.Linked(grid.South(cell)) {
 			for a := 0; a < ww; a++ {
-				img.Set(i*pw+i*ww+1, y+a, bottom)
-				img.Set(i*pw+i*ww+2, y+a, bottom)
-				img.Set(i*pw+i*ww+3, y+a, bottom)
+				img.Set(i*pw+i*ww+ww+0, y+a, bottom)
+				img.Set(i*pw+i*ww+ww+1, y+a, bottom)
+				img.Set(i*pw+i*ww+ww+2, y+a, bottom)
 			}
 		}
 		for a := 0; a < ww; a++ {
-			img.Set(i*pw+pw+i*ww+ww, y+a, bottom)
+			for b := 0; b < ww; b++ {
+				img.Set((i*pw+pw)+(i*ww+ww)+b, y+a, color.Black)
+			}
 		}
 	}
 }
 func renderMiddle(grid *maze.Grid, row []*maze.Cell, y int, img *image.RGBA) {
-	img.Set(0, y+1, middle)
-	img.Set(0, y+2, middle)
-	img.Set(0, y+3, middle)
-
+	for a := 0; a < ww; a++ {
+		img.Set(a, y+0, middle)
+		img.Set(a, y+1, middle)
+		img.Set(a, y+2, middle)
+	}
 	for i, cell := range row {
 		if !cell.Linked(grid.East(cell)) {
-			img.Set(i*pw+pw+i*ww+ww, y+1, middle)
-			img.Set(i*pw+pw+i*ww+ww, y+2, middle)
-			img.Set(i*pw+pw+i*ww+ww, y+3, middle)
+			for a := 0; a < ww; a++ {
+				img.Set(i*pw+pw+i*ww+ww+a, y+0, middle)
+				img.Set(i*pw+pw+i*ww+ww+a, y+1, middle)
+				img.Set(i*pw+pw+i*ww+ww+a, y+2, middle)
+			}
 		}
 	}
 
