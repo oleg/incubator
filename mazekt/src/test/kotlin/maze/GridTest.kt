@@ -14,6 +14,17 @@ class GridTest {
         assertEquals(9, grid.width)
     }
 
+    @Test
+    fun `new grid 2`() {
+        val g = grid {
+            row(0, 1, 0, 1)
+            row(0, 1, 0, 1)
+            row(0, 1, 1, 1)
+            row(0, 0, 0, 0)
+        }
+
+    }
+
 }
 
 
