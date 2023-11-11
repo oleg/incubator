@@ -1,4 +1,6 @@
 use std::error::Error;
+use std::fs::File;
+use std::io::{self, BufRead, BufReader};
 
 use clap::{App, Arg};
 
@@ -42,13 +44,44 @@ pub fn get_args() -> MyResult<Config> {
 
     Ok(Config {
         files: matches.values_of_lossy("files").unwrap(),
-        number_lines: matches.is_present("number_lines"),
-        number_nonblank_lines: matches.is_present("number_nonblank_lines"),
+        number_lines: matches.is_present("number"),
+        number_nonblank_lines: matches.is_present("number_nonblank"),
     })
 }
 
 
 pub fn run(config: Config) -> MyResult<()> {
-    dbg!(config);
+    for filename in config.files {
+        match open(&filename) {
+            Err(err) => eprintln!("Failed to open {}: {}", filename, err),
+            Ok(f) => {
+                let mut i: i32 = 0;
+                for line in f.lines() {
+                    match line {
+                        Err(err_line) => eprintln!("Failed to read line: {}", err_line),
+                        Ok(s) => {
+                            let prefix = if config.number_lines {
+                                i += 1;
+                                format!("     {}\t", i)
+                            } else if config.number_nonblank_lines && !s.is_empty() {
+                                i += 1;
+                                format!("     {}\t", i)
+                            } else {
+                                "".to_string()
+                            };
+                            println!("{}{}", prefix, s)
+                        }
+                    };
+                }
+            }
+        }
+    }
     Ok(())
+}
+
+fn open(filename: &str) -> MyResult<Box<dyn BufRead>> {
+    match filename {
+        "-" => Ok(Box::new(BufReader::new(io::stdin()))),
+        _ => Ok(Box::new(BufReader::new(File::open(filename)?))),
+    }
 }
