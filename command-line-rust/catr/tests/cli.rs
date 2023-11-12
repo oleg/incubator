@@ -101,7 +101,10 @@ fn spiders_n() -> TestResult {
 
 #[test]
 fn spiders_b() -> TestResult {
-    run(&["--number-nonblank", SPIDERS], "tests/expected/spiders.txt.b.out")
+    run(
+        &["--number-nonblank", SPIDERS],
+        "tests/expected/spiders.txt.b.out",
+    )
 }
 
 #[test]
@@ -123,7 +126,6 @@ fn bustle_b() -> TestResult {
 fn all() -> TestResult {
     run(&[FOX, SPIDERS, BUSTLE], "tests/expected/all.out")
 }
-
 
 #[test]
 fn all_n() -> TestResult {
@@ -149,7 +151,6 @@ fn gen_bad_file() -> String {
     }
 }
 
-
 fn run(args: &[&str], expected_file: &str) -> TestResult {
     let expected = fs::read_to_string(expected_file)?;
     Command::cargo_bin(PRG)?
@@ -159,7 +160,6 @@ fn run(args: &[&str], expected_file: &str) -> TestResult {
         .stdout(expected);
     Ok(())
 }
-
 
 fn run_stdin(input_file: &str, args: &[&str], expected_file: &str) -> TestResult {
     let input = fs::read_to_string(input_file)?;

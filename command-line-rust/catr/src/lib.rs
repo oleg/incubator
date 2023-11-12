@@ -49,29 +49,23 @@ pub fn get_args() -> MyResult<Config> {
     })
 }
 
-
 pub fn run(config: Config) -> MyResult<()> {
     for filename in config.files {
         match open(&filename) {
-            Err(err) => eprintln!("Failed to open {}: {}", filename, err),
+            Err(err) => eprintln!("{}: {}", filename, err),
             Ok(f) => {
-                let mut i: i32 = 0;
-                for line in f.lines() {
-                    match line {
-                        Err(err_line) => eprintln!("Failed to read line: {}", err_line),
-                        Ok(s) => {
-                            let prefix = if config.number_lines {
-                                i += 1;
-                                format!("     {}\t", i)
-                            } else if config.number_nonblank_lines && !s.is_empty() {
-                                i += 1;
-                                format!("     {}\t", i)
-                            } else {
-                                "".to_string()
-                            };
-                            println!("{}{}", prefix, s)
-                        }
+                let mut line_num = 0;
+                for line_result in f.lines() {
+                    let line = line_result?;
+                    let prefix = if (config.number_lines)
+                        || (config.number_nonblank_lines && !line.is_empty())
+                    {
+                        line_num += 1;
+                        format!("{:>6}\t", line_num)
+                    } else {
+                        String::new()
                     };
+                    println!("{}{}", prefix, line)
                 }
             }
         }
