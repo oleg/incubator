@@ -26,6 +26,20 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         })
         .sum();
 
-    println!("{}", floor);
+    println!("day1, part1: {}", floor);
+
+
+    let mut floor2 = 0;
+    for (position, char) in first_line.chars().enumerate() {
+        match char {
+            '(' => floor2 += 1,
+            ')' => floor2 -= 1,
+            _ => (),
+        }
+        if floor2 == -1 {
+            println!("day1, part2: {}", position + 1);
+            break;
+        }
+    }
     Ok(())
 }
