@@ -49,6 +49,27 @@ fn number_of_steps(mut num: i32) -> i32 {
     steps
 }
 
+fn merge_alternately(word1: String, word2: String) -> String {
+    let mut i1 = word1.chars();
+    let mut i2 = word2.chars();
+    let mut v = Vec::with_capacity(word1.len() + word2.len());
+    loop {
+        let n1 = i1.next();
+        let n2 = i2.next();
+        if let Some(c) = n1 {
+            v.push(c);
+        }
+        if let Some(c) = n2 {
+            v.push(c);
+        }
+        if n1.is_none() && n2.is_none() {
+            break;
+        }
+    }
+    v.into_iter().collect()
+}
+
+
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct ListNode {
     pub val: i32,
@@ -112,7 +133,7 @@ fn can_construct_ransom_note(ransom_note: String, magazine: String) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use crate::{can_construct_ransom_note, fizz_buzz, ListNode, maximum_wealth, middle_node, number_of_steps, running_sum};
+    use crate::{can_construct_ransom_note, fizz_buzz, ListNode, maximum_wealth, merge_alternately, middle_node, number_of_steps, running_sum};
 
     #[test]
     fn test_running_sum() {
@@ -156,5 +177,12 @@ mod tests {
         assert_eq!(can_construct_ransom_note("a".to_string(), "b".to_string()), false);
         assert_eq!(can_construct_ransom_note("aa".to_string(), "ab".to_string()), false);
         assert_eq!(can_construct_ransom_note("aa".to_string(), "aab".to_string()), true);
+    }
+
+    #[test]
+    fn test_merge_alternately() {
+        assert_eq!(merge_alternately("abc".to_string(), "pqr".to_string()), "apbqcr".to_string());
+        assert_eq!(merge_alternately("ab".to_string(), "pqrs".to_string()), "apbqrs".to_string());
+        assert_eq!(merge_alternately("abcd".to_string(), "pq".to_string()), "apbqcd".to_string());
     }
 }
