@@ -34,9 +34,22 @@ fn fizz_buzz(n: i32) -> Vec<String> {
     result
 }
 
+fn number_of_steps(mut num: i32) -> i32 {
+    let mut steps = 0;
+    while num != 0 {
+        steps+= 1;
+        if num % 2 == 0 {
+            num /= 2;
+        } else {
+            num -= 1;
+        }
+    }
+    steps
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::{fizz_buzz, maximum_wealth, running_sum};
+    use crate::{fizz_buzz, maximum_wealth, number_of_steps, running_sum};
 
     #[test]
     fn test_running_sum() {
@@ -57,5 +70,12 @@ mod tests {
         assert_eq!(fizz_buzz(3), vec!["1", "2", "Fizz"]);
         assert_eq!(fizz_buzz(5), vec!["1", "2", "Fizz", "4", "Buzz"]);
         assert_eq!(fizz_buzz(15), vec!["1", "2", "Fizz", "4", "Buzz", "Fizz", "7", "8", "Fizz", "Buzz", "11", "Fizz", "13", "14", "FizzBuzz"]);
+    }
+
+    #[test]
+    fn test_number_of_steps() {
+        assert_eq!(number_of_steps(14), 6);
+        assert_eq!(number_of_steps(8), 4);
+        assert_eq!(number_of_steps(123), 12);
     }
 }
