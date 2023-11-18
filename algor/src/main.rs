@@ -37,7 +37,7 @@ fn fizz_buzz(n: i32) -> Vec<String> {
 fn number_of_steps(mut num: i32) -> i32 {
     let mut steps = 0;
     while num != 0 {
-        steps+= 1;
+        steps += 1;
         if num % 2 == 0 {
             num /= 2;
         } else {
@@ -47,9 +47,50 @@ fn number_of_steps(mut num: i32) -> i32 {
     steps
 }
 
+#[derive(PartialEq, Eq, Clone, Debug)]
+pub struct ListNode {
+    pub val: i32,
+    pub next: Option<Box<ListNode>>,
+}
+
+impl ListNode {
+    #[inline]
+    fn new(val: i32) -> Self {
+        ListNode {
+            next: None,
+            val,
+        }
+    }
+    fn from(vec: Vec<i32>) -> Self {
+        let mut head = ListNode::new(vec[0]);
+        let mut current = &mut head;
+        for i in 1..vec.len() {
+            let node = ListNode::new(vec[i]);
+            current.next = Some(Box::new(node));
+            current = current.next.as_mut().unwrap();
+        }
+        head
+    }
+}
+
+fn middle_node(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
+    let mut step = head.clone();
+    let mut half_step = head.clone();
+
+    while step.is_some() {
+        step = step.unwrap().next;
+        if step.is_some() {
+            step = step.unwrap().next;
+            half_step = half_step.unwrap().next;
+        }
+    }
+
+    half_step
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::{fizz_buzz, maximum_wealth, number_of_steps, running_sum};
+    use crate::{fizz_buzz, ListNode, maximum_wealth, middle_node, number_of_steps, running_sum};
 
     #[test]
     fn test_running_sum() {
@@ -77,5 +118,14 @@ mod tests {
         assert_eq!(number_of_steps(14), 6);
         assert_eq!(number_of_steps(8), 4);
         assert_eq!(number_of_steps(123), 12);
+    }
+
+    #[test]
+    fn test_middle_node() {
+        assert_eq!(middle_node(Some(Box::new(ListNode::from(vec![1, 2, 3, 4, 5])))),
+                   Some(Box::new(ListNode::from(vec![3, 4, 5]))));
+
+        assert_eq!(middle_node(Some(Box::new(ListNode::from(vec![1, 2, 3, 4, 5, 6])))),
+                   Some(Box::new(ListNode::from(vec![4, 5, 6]))));
     }
 }
