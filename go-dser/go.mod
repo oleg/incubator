@@ -6,7 +6,6 @@ require (
 	github.com/gorilla/mux v1.8.1
 	github.com/stretchr/testify v1.7.0
 	github.com/tysontate/gommap v0.0.0-20210506040252-ef38c88b18e1
-	google.golang.org/genproto v0.0.0-20231030173426-d783a09b4405
 	google.golang.org/grpc v1.59.0
 	google.golang.org/protobuf v1.31.0
 	launchpad.net/gocheck v0.0.0-20140225173054-000000000087 // indirect
@@ -23,5 +22,5 @@ require (
 	golang.org/x/sys v0.14.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c // indirect
+	gopkg.in/yaml.v3 v3.0.0 // indirect
 )
