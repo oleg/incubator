@@ -20,9 +20,23 @@ fn maximum_wealth(accounts: Vec<Vec<i32>>) -> i32 {
     max
 }
 
+fn fizz_buzz(n: i32) -> Vec<String> {
+    let mut result = Vec::with_capacity(n as usize);
+    for i in 1..=n {
+        let v = match i {
+            _ if i % 15 == 0 => "FizzBuzz".to_string(),
+            _ if i % 3 == 0 => "Fizz".to_string(),
+            _ if i % 5 == 0 => "Buzz".to_string(),
+            _ => i.to_string()
+        };
+        result.push(v);
+    }
+    result
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::{maximum_wealth, running_sum};
+    use crate::{fizz_buzz, maximum_wealth, running_sum};
 
     #[test]
     fn test_running_sum() {
@@ -36,5 +50,12 @@ mod tests {
         assert_eq!(maximum_wealth(vec![vec![1, 2, 3], vec![3, 2, 1]]), 6);
         assert_eq!(maximum_wealth(vec![vec![1, 5], vec![7, 3], vec![3, 5]]), 10);
         assert_eq!(maximum_wealth(vec![vec![2, 8, 7], vec![7, 1, 3], vec![1, 9, 5]]), 17);
+    }
+
+    #[test]
+    fn test_fizz_buzz() {
+        assert_eq!(fizz_buzz(3), vec!["1", "2", "Fizz"]);
+        assert_eq!(fizz_buzz(5), vec!["1", "2", "Fizz", "4", "Buzz"]);
+        assert_eq!(fizz_buzz(15), vec!["1", "2", "Fizz", "4", "Buzz", "Fizz", "7", "8", "Fizz", "Buzz", "11", "Fizz", "13", "14", "FizzBuzz"]);
     }
 }
