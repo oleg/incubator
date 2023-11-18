@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 fn main() {
     println!("Hello, world!");
 }
@@ -88,9 +90,29 @@ fn middle_node(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
     half_step
 }
 
+fn can_construct_ransom_note(ransom_note: String, magazine: String) -> bool {
+    let mut letters = HashMap::new();
+    for c in magazine.chars() {
+        letters.entry(c)
+            .and_modify(|e| { *e += 1 })
+            .or_insert(1);
+    }
+
+    for c in ransom_note.chars() {
+        let v = letters.entry(c)
+            .and_modify(|e| { *e -= 1 })
+            .or_insert(-1);
+        if *v < 0 {
+            return false;
+        };
+    }
+
+    true
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::{fizz_buzz, ListNode, maximum_wealth, middle_node, number_of_steps, running_sum};
+    use crate::{can_construct_ransom_note, fizz_buzz, ListNode, maximum_wealth, middle_node, number_of_steps, running_sum};
 
     #[test]
     fn test_running_sum() {
@@ -127,5 +149,12 @@ mod tests {
 
         assert_eq!(middle_node(Some(Box::new(ListNode::from(vec![1, 2, 3, 4, 5, 6])))),
                    Some(Box::new(ListNode::from(vec![4, 5, 6]))));
+    }
+
+    #[test]
+    fn test_can_construct_ransom_note() {
+        assert_eq!(can_construct_ransom_note("a".to_string(), "b".to_string()), false);
+        assert_eq!(can_construct_ransom_note("aa".to_string(), "ab".to_string()), false);
+        assert_eq!(can_construct_ransom_note("aa".to_string(), "aab".to_string()), true);
     }
 }
