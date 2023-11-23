@@ -131,9 +131,26 @@ fn can_construct_ransom_note(ransom_note: String, magazine: String) -> bool {
     true
 }
 
+fn find_max_consecutive_ones(nums: Vec<i32>) -> i32 {
+    let (mut max, mut cur) = (0, 0);
+    for v in nums {
+        match v {
+            0 => {
+                if cur > max { max = cur; }
+                cur = 0;
+            }
+
+            1 => { cur += 1 }
+            _ => {}
+        }
+    }
+    if cur > max { max = cur; }
+    max
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::{can_construct_ransom_note, fizz_buzz, ListNode, maximum_wealth, merge_alternately, middle_node, number_of_steps, running_sum};
+    use crate::{can_construct_ransom_note, find_max_consecutive_ones, fizz_buzz, ListNode, maximum_wealth, merge_alternately, middle_node, number_of_steps, running_sum};
 
     #[test]
     fn test_running_sum() {
@@ -184,5 +201,11 @@ mod tests {
         assert_eq!(merge_alternately("abc".to_string(), "pqr".to_string()), "apbqcr".to_string());
         assert_eq!(merge_alternately("ab".to_string(), "pqrs".to_string()), "apbqrs".to_string());
         assert_eq!(merge_alternately("abcd".to_string(), "pq".to_string()), "apbqcd".to_string());
+    }
+
+    #[test]
+    fn test_find_max_consecutive_ones() {
+        assert_eq!(find_max_consecutive_ones(vec![1, 1, 0, 1, 1, 1]), 3);
+        assert_eq!(find_max_consecutive_ones(vec![1, 0, 1, 1, 0, 1]), 2);
     }
 }
