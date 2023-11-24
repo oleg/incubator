@@ -157,9 +157,21 @@ fn sorted_squares(mut nums: Vec<i32>) -> Vec<i32> {
     nums
 }
 
+fn duplicate_zeros(arr: &mut Vec<i32>) {
+    let mut i = 0;
+    while i < arr.len() {
+        if arr[i] == 0 {
+            i += 1;
+            arr.insert(i, 0);
+            arr.pop();
+        }
+        i += 1;
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::{can_construct_ransom_note, find_max_consecutive_ones, fizz_buzz, ListNode, maximum_wealth, merge_alternately, middle_node, number_of_steps, running_sum, sorted_squares};
+    use crate::{can_construct_ransom_note, duplicate_zeros, find_max_consecutive_ones, fizz_buzz, ListNode, maximum_wealth, merge_alternately, middle_node, number_of_steps, running_sum, sorted_squares};
 
     #[test]
     fn test_running_sum() {
@@ -222,6 +234,17 @@ mod tests {
     fn test_sorted_squares() {
         assert_eq!(sorted_squares(vec![-4, -1, 0, 3, 10]), vec![0, 1, 9, 16, 100]);
         assert_eq!(sorted_squares(vec![-7, -3, 2, 3, 11]), vec![4, 9, 9, 49, 121]);
+    }
+
+    #[test]
+    fn test_duplicate_zeros() {
+        let mut v1 = vec![1, 0, 2, 3, 0, 4, 5, 0];
+        duplicate_zeros(&mut v1);
+        assert_eq!(v1, vec![1, 0, 0, 2, 3, 0, 0, 4]);
+
+        let mut v2 = vec![1, 2, 3];
+        duplicate_zeros(&mut v2);
+        assert_eq!(v2, vec![1, 2, 3]);
     }
 
     // #[test]
