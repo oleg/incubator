@@ -169,9 +169,37 @@ fn duplicate_zeros(arr: &mut Vec<i32>) {
     }
 }
 
+fn merge_sorted(nums1: &mut Vec<i32>, m: i32, nums2: &mut Vec<i32>, n: i32) {
+    let mut i1: i32 = m - 1;
+    let mut i2: i32 = n - 1;
+    let mut t: i32 = m + n - 1;
+
+    while i1 >= 0 && i2 >= 0 {
+        if nums1[i1 as usize] >= nums2[i2 as usize] {
+            nums1[t as usize] = nums1[i1 as usize];
+            i1 -= 1;
+        } else {
+            nums1[t as usize] = nums2[i2 as usize];
+            i2 -= 1;
+        }
+        t -= 1;
+    }
+    while i1 >= 0 {
+        nums1[t as usize] = nums1[i1 as usize];
+        i1 -= 1;
+        t -= 1;
+    }
+    while i2 >= 0 {
+        nums1[t as usize] = nums2[i2 as usize];
+        i2 -= 1;
+        t -= 1;
+    }
+}
+
+
 #[cfg(test)]
 mod tests {
-    use crate::{can_construct_ransom_note, duplicate_zeros, find_max_consecutive_ones, fizz_buzz, ListNode, maximum_wealth, merge_alternately, middle_node, number_of_steps, running_sum, sorted_squares};
+    use crate::{can_construct_ransom_note, duplicate_zeros, find_max_consecutive_ones, fizz_buzz, ListNode, maximum_wealth, merge_alternately, merge_sorted, middle_node, number_of_steps, running_sum, sorted_squares};
 
     #[test]
     fn test_running_sum() {
@@ -245,6 +273,25 @@ mod tests {
         let mut v2 = vec![1, 2, 3];
         duplicate_zeros(&mut v2);
         assert_eq!(v2, vec![1, 2, 3]);
+    }
+
+    #[test]
+    fn test_merge_sorted() {
+        let mut v1 = vec![1, 2, 3, 0, 0, 0];
+        merge_sorted(&mut v1, 3, &mut vec![2, 5, 6], 3);
+        assert_eq!(v1, vec![1, 2, 2, 3, 5, 6]);
+
+        let mut v2 = vec![1];
+        merge_sorted(&mut v2, 1, &mut vec![], 0);
+        assert_eq!(v2, vec![1]);
+
+        let mut v3 = vec![0];
+        merge_sorted(&mut v3, 0, &mut vec![1], 1);
+        assert_eq!(v3, vec![1]);
+
+        let mut v4 = vec![2, 0];
+        merge_sorted(&mut v4, 1, &mut vec![1], 1);
+        assert_eq!(v4, vec![1, 2]);
     }
 
     // #[test]
