@@ -97,18 +97,19 @@ impl ListNode {
 }
 
 fn middle_node(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
-    let mut step = head.clone();
-    let mut half_step = head.clone();
+    let (mut step_op, mut half_step_op) = (head.clone(), head.clone());
 
-    while step.is_some() {
-        step = step.unwrap().next;
-        if step.is_some() {
-            step = step.unwrap().next;
-            half_step = half_step.unwrap().next;
+    while let Some(step) = step_op {
+        step_op = step.next;
+        if let Some(step) = step_op {
+            step_op = step.next;
+            if let Some(half_step) = half_step_op {
+                half_step_op = half_step.next;
+            }
         }
     }
 
-    half_step
+    half_step_op
 }
 
 fn can_construct_ransom_note(ransom_note: String, magazine: String) -> bool {
@@ -148,9 +149,17 @@ fn find_max_consecutive_ones(nums: Vec<i32>) -> i32 {
     max
 }
 
+fn sorted_squares(mut nums: Vec<i32>) -> Vec<i32> {
+    for i in 0..nums.len() {
+        nums[i] *= nums[i];
+    }
+    nums.sort();
+    nums
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::{can_construct_ransom_note, find_max_consecutive_ones, fizz_buzz, ListNode, maximum_wealth, merge_alternately, middle_node, number_of_steps, running_sum};
+    use crate::{can_construct_ransom_note, find_max_consecutive_ones, fizz_buzz, ListNode, maximum_wealth, merge_alternately, middle_node, number_of_steps, running_sum, sorted_squares};
 
     #[test]
     fn test_running_sum() {
@@ -208,4 +217,22 @@ mod tests {
         assert_eq!(find_max_consecutive_ones(vec![1, 1, 0, 1, 1, 1]), 3);
         assert_eq!(find_max_consecutive_ones(vec![1, 0, 1, 1, 0, 1]), 2);
     }
+
+    #[test]
+    fn test_sorted_squares() {
+        assert_eq!(sorted_squares(vec![-4, -1, 0, 3, 10]), vec![0, 1, 9, 16, 100]);
+        assert_eq!(sorted_squares(vec![-7, -3, 2, 3, 11]), vec![4, 9, 9, 49, 121]);
+    }
+
+    // #[test]
+    // fn test_find_max_consecutive_ones() {
+    //     assert_eq!(find_max_consecutive_ones2(vec![1]), 1);
+    //     assert_eq!(find_max_consecutive_ones2(vec![0]), 1);
+    //     assert_eq!(find_max_consecutive_ones2(vec![1, 0]), 2);
+    //     assert_eq!(find_max_consecutive_ones2(vec![1, 0, 1]), 3);
+    //     assert_eq!(find_max_consecutive_ones2(vec![0, 0, 0]), 1);
+    //     assert_eq!(find_max_consecutive_ones2(vec![1, 1]), 2);
+    //     assert_eq!(find_max_consecutive_ones2(vec![1, 0, 1, 1, 0]), 4);
+    //     assert_eq!(find_max_consecutive_ones2(vec![1, 0, 1, 1, 0, 1]), 4);
+    // }
 }
