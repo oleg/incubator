@@ -170,27 +170,29 @@ fn duplicate_zeros(arr: &mut Vec<i32>) {
 }
 
 fn merge_sorted(nums1: &mut Vec<i32>, m: i32, nums2: &mut Vec<i32>, n: i32) {
-    let mut i1: i32 = m - 1;
-    let mut i2: i32 = n - 1;
-    let mut t: i32 = m + n - 1;
+    let mut i1: usize = m as usize;
+    let mut i2: usize = n as usize;
+    let mut t: usize = (m + n) as usize;
 
-    while i1 >= 0 && i2 >= 0 {
-        if nums1[i1 as usize] >= nums2[i2 as usize] {
-            nums1[t as usize] = nums1[i1 as usize];
+    while i1 > 0 && i2 > 0 {
+        if nums1[i1 - 1] >= nums2[i2 - 1] {
+            nums1[t - 1] = nums1[i1 - 1];
             i1 -= 1;
         } else {
-            nums1[t as usize] = nums2[i2 as usize];
+            nums1[t - 1] = nums2[i2 - 1];
             i2 -= 1;
         }
         t -= 1;
     }
-    while i1 >= 0 {
-        nums1[t as usize] = nums1[i1 as usize];
+
+    while i1 > 0 {
+        nums1[t - 1] = nums1[i1 - 1];
         i1 -= 1;
         t -= 1;
     }
-    while i2 >= 0 {
-        nums1[t as usize] = nums2[i2 as usize];
+
+    while i2 > 0 {
+        nums1[t - 1] = nums2[i2 - 1];
         i2 -= 1;
         t -= 1;
     }
