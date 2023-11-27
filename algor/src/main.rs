@@ -215,9 +215,29 @@ fn remove_element(nums: &mut Vec<i32>, val: i32) -> i32 {
     (nums.len() - equal) as i32
 }
 
+fn remove_duplicates(nums: &mut Vec<i32>) -> i32 {
+    let mut dup = 0;
+
+    let mut i = 1;
+    let mut prev = nums[0];
+
+    while i < nums.len() {
+        let last = nums[i];
+        if last != prev {
+            nums[i - dup] = last;
+        } else {
+            dup += 1;
+        }
+        prev = last;
+        i += 1;
+    }
+
+    (nums.len() - dup) as i32
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::{can_construct_ransom_note, duplicate_zeros, find_max_consecutive_ones, fizz_buzz, ListNode, maximum_wealth, merge_alternately, merge_sorted, middle_node, number_of_steps, remove_element, running_sum, sorted_squares};
+    use crate::{can_construct_ransom_note, duplicate_zeros, find_max_consecutive_ones, fizz_buzz, ListNode, maximum_wealth, merge_alternately, merge_sorted, middle_node, number_of_steps, remove_duplicates, remove_element, running_sum, sorted_squares};
 
     #[test]
     fn test_running_sum() {
@@ -327,6 +347,24 @@ mod tests {
         assert_eq!(v2[1], 1);
         assert_eq!(v2[2], 3);
         assert_eq!(v2[3], 0);
+        assert_eq!(v2[4], 4);
+    }
+
+    #[test]
+    fn test_remove_duplicates() {
+        let mut v1 = vec![1, 1, 2];
+        let r1 = remove_duplicates(&mut v1);
+        assert_eq!(r1, 2);
+        assert_eq!(v1[0], 1);
+        assert_eq!(v1[1], 2);
+
+        let mut v2 = vec![0, 0, 1, 1, 1, 2, 2, 3, 3, 4];
+        let r2 = remove_duplicates(&mut v2);
+        assert_eq!(r2, 5);
+        assert_eq!(v2[0], 0);
+        assert_eq!(v2[1], 1);
+        assert_eq!(v2[2], 2);
+        assert_eq!(v2[3], 3);
         assert_eq!(v2[4], 4);
     }
 
