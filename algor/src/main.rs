@@ -248,20 +248,47 @@ fn check_if_exist(arr: Vec<i32>) -> bool {
         })
 }
 
+fn valid_mountain_array(arr: Vec<i32>) -> bool {
+    if arr.len() < 3 || arr[0] >= arr[1] {
+        return false;
+    }
+    let mut up = true;
+    for i in 1..arr.len() {
+        let curr = arr[i];
+        let prev = arr[i - 1];
+        match curr {
+            _ if curr == prev => return false,
+            _ if up && curr < prev => up = false,
+            _ if !up && curr > prev => return false,
+            _ => {}
+        }
+    }
+    !up
+}
+
 #[cfg(test)]
 mod tests {
     use crate::{
         can_construct_ransom_note, check_if_exist, duplicate_zeros, find_max_consecutive_ones,
         fizz_buzz, ListNode, maximum_wealth, merge_alternately, merge_sorted, middle_node,
         number_of_steps, remove_duplicates, remove_element, running_sum, sorted_squares,
+        valid_mountain_array,
     };
+
+    #[test]
+    fn test_valid_mountain_array() {
+        assert_eq!(valid_mountain_array(vec![2, 1]), false);
+        assert_eq!(valid_mountain_array(vec![3, 5, 5]), false);
+        assert_eq!(valid_mountain_array(vec![0, 3, 2, 1]), true);
+        assert_eq!(valid_mountain_array(vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9]), false);
+        assert_eq!(valid_mountain_array(vec![9, 8, 7, 6, 5, 4, 3, 2, 1, 0]), false);
+    }
 
     #[test]
     fn test_check_if_exist() {
         assert_eq!(check_if_exist(vec![10, 2, 5, 3]), true);
         assert_eq!(check_if_exist(vec![3, 1, 7, 11]), false);
     }
-
 
     #[test]
     fn test_running_sum() {
