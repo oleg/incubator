@@ -235,9 +235,33 @@ fn remove_duplicates(nums: &mut Vec<i32>) -> i32 {
     (nums.len() - dup) as i32
 }
 
+fn check_if_exist(arr: Vec<i32>) -> bool {
+    arr.iter()
+        .map(|&v| v * 2)
+        .enumerate()
+        .any(|(i, v)| {
+            arr.iter()
+                .enumerate()
+                .any(|(j, &v2)| {
+                    i != j && v == v2
+                })
+        })
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::{can_construct_ransom_note, duplicate_zeros, find_max_consecutive_ones, fizz_buzz, ListNode, maximum_wealth, merge_alternately, merge_sorted, middle_node, number_of_steps, remove_duplicates, remove_element, running_sum, sorted_squares};
+    use crate::{
+        can_construct_ransom_note, check_if_exist, duplicate_zeros, find_max_consecutive_ones,
+        fizz_buzz, ListNode, maximum_wealth, merge_alternately, merge_sorted, middle_node,
+        number_of_steps, remove_duplicates, remove_element, running_sum, sorted_squares,
+    };
+
+    #[test]
+    fn test_check_if_exist() {
+        assert_eq!(check_if_exist(vec![10, 2, 5, 3]), true);
+        assert_eq!(check_if_exist(vec![3, 1, 7, 11]), false);
+    }
+
 
     #[test]
     fn test_running_sum() {
