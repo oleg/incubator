@@ -266,14 +266,33 @@ fn valid_mountain_array(arr: Vec<i32>) -> bool {
     !up
 }
 
+fn replace_elements(mut arr: Vec<i32>) -> Vec<i32> {
+    let i_last = arr.len() - 1;
+    let mut max = arr[i_last];
+    arr[i_last] = -1;
+    for i in (0..i_last).rev() {
+        let curr = arr[i];
+        arr[i] = max;
+        if curr > max {
+            max = curr;
+        }
+    }
+    arr
+}
+
 #[cfg(test)]
 mod tests {
     use crate::{
         can_construct_ransom_note, check_if_exist, duplicate_zeros, find_max_consecutive_ones,
         fizz_buzz, ListNode, maximum_wealth, merge_alternately, merge_sorted, middle_node,
-        number_of_steps, remove_duplicates, remove_element, running_sum, sorted_squares,
-        valid_mountain_array,
+        number_of_steps, remove_duplicates, remove_element, replace_elements, running_sum,
+        sorted_squares, valid_mountain_array,
     };
+
+    #[test]
+    fn test_replace_elements() {
+        assert_eq!(replace_elements(vec![17, 18, 5, 4, 6, 1]), vec![18, 6, 6, 6, 1, -1]);
+    }
 
     #[test]
     fn test_valid_mountain_array() {
