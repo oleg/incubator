@@ -306,7 +306,23 @@ fn move_zeroes(nums: &mut Vec<i32>) {
     for i in i_write..nums.len() {
         nums[i] = 0;
     }
+}
 
+fn sort_array_by_parity(mut nums: Vec<i32>) -> Vec<i32> {
+    let mut i_write = 1;
+
+    for i_read in 1..nums.len() {
+        if nums[i_read] % 2 == 0 {
+            nums.swap(i_write, i_read);
+            i_write += 1;
+        }
+    }
+
+    if nums[0] % 2 != 0 && nums.len() > 1 {
+        nums.swap(0, i_write - 1);
+    }
+
+    nums
 }
 
 #[cfg(test)]
@@ -315,8 +331,17 @@ mod tests {
         can_construct_ransom_note, check_if_exist, duplicate_zeros, find_max_consecutive_ones,
         fizz_buzz, ListNode, maximum_wealth, merge_alternately, merge_sorted, middle_node,
         move_zeroes, number_of_steps, remove_duplicates, remove_duplicates2, remove_element, replace_elements,
-        running_sum, sorted_squares, valid_mountain_array,
+        running_sum, sort_array_by_parity, sorted_squares, valid_mountain_array,
     };
+
+    #[test]
+    fn test_sort_array_by_parity() {
+        assert_eq!(sort_array_by_parity(vec![3, 1, 2, 4]), vec![4, 2, 3, 1]);
+        assert_eq!(sort_array_by_parity(vec![0]), vec![0]);
+        assert_eq!(sort_array_by_parity(vec![1]), vec![1]);
+        assert_eq!(sort_array_by_parity(vec![2, 4]), vec![2, 4]);
+        assert_eq!(sort_array_by_parity(vec![1, 3]), vec![1, 3]);
+    }
 
     #[test]
     fn test_move_zeros() {
