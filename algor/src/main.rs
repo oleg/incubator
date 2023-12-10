@@ -234,6 +234,7 @@ fn remove_duplicates(nums: &mut Vec<i32>) -> i32 {
 
     (nums.len() - dup) as i32
 }
+
 fn remove_duplicates2(nums: &mut Vec<i32>) -> i32 {
     let mut i_write = 1;
 
@@ -292,14 +293,37 @@ fn replace_elements(mut arr: Vec<i32>) -> Vec<i32> {
     arr
 }
 
+fn move_zeroes(nums: &mut Vec<i32>) {
+    let mut i_write = 0;
+
+    for i_read in 0..nums.len() {
+        if nums[i_read] != 0 {
+            nums[i_write] = nums[i_read];
+            i_write += 1;
+        }
+    }
+
+    for i in i_write..nums.len() {
+        nums[i] = 0;
+    }
+
+}
+
 #[cfg(test)]
 mod tests {
     use crate::{
         can_construct_ransom_note, check_if_exist, duplicate_zeros, find_max_consecutive_ones,
         fizz_buzz, ListNode, maximum_wealth, merge_alternately, merge_sorted, middle_node,
-        number_of_steps, remove_duplicates, remove_duplicates2, remove_element, replace_elements, running_sum,
-        sorted_squares, valid_mountain_array,
+        move_zeroes, number_of_steps, remove_duplicates, remove_duplicates2, remove_element, replace_elements,
+        running_sum, sorted_squares, valid_mountain_array,
     };
+
+    #[test]
+    fn test_move_zeros() {
+        let mut vec1 = vec![0, 1, 0, 3, 12];
+        move_zeroes(&mut vec1);
+        assert_eq!(vec1, vec![1, 3, 12, 0, 0]);
+    }
 
     #[test]
     fn test_replace_elements() {
