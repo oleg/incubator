@@ -215,6 +215,19 @@ fn remove_element(nums: &mut Vec<i32>, val: i32) -> i32 {
     (nums.len() - equal) as i32
 }
 
+fn remove_element2(nums: &mut Vec<i32>, val: i32) -> i32 {
+    let mut i_write = 0;
+
+    for i_read in 0..nums.len() {
+        if nums[i_read] != val {
+            nums.swap(i_write, i_read);
+            i_write += 1;
+        }
+    }
+
+    i_write as i32
+}
+
 fn remove_duplicates(nums: &mut Vec<i32>) -> i32 {
     let mut dup = 0;
 
@@ -309,17 +322,13 @@ fn move_zeroes(nums: &mut Vec<i32>) {
 }
 
 fn sort_array_by_parity(mut nums: Vec<i32>) -> Vec<i32> {
-    let mut i_write = 1;
+    let mut i_write = 0;
 
-    for i_read in 1..nums.len() {
+    for i_read in 0..nums.len() {
         if nums[i_read] % 2 == 0 {
             nums.swap(i_write, i_read);
             i_write += 1;
         }
-    }
-
-    if nums[0] % 2 != 0 && nums.len() > 1 {
-        nums.swap(0, i_write - 1);
     }
 
     nums
@@ -330,13 +339,14 @@ mod tests {
     use crate::{
         can_construct_ransom_note, check_if_exist, duplicate_zeros, find_max_consecutive_ones,
         fizz_buzz, ListNode, maximum_wealth, merge_alternately, merge_sorted, middle_node,
-        move_zeroes, number_of_steps, remove_duplicates, remove_duplicates2, remove_element, replace_elements,
-        running_sum, sort_array_by_parity, sorted_squares, valid_mountain_array,
+        move_zeroes, number_of_steps, remove_duplicates, remove_duplicates2, remove_element, remove_element2,
+        replace_elements, running_sum, sort_array_by_parity, sorted_squares, valid_mountain_array,
     };
 
     #[test]
     fn test_sort_array_by_parity() {
-        assert_eq!(sort_array_by_parity(vec![3, 1, 2, 4]), vec![4, 2, 3, 1]);
+        assert_eq!(sort_array_by_parity(vec![3, 1, 2, 4]), vec![2, 4, 3, 1]);
+        assert_eq!(sort_array_by_parity(vec![1, 2, 3, 4]), vec![2, 4, 3, 1]);
         assert_eq!(sort_array_by_parity(vec![0]), vec![0]);
         assert_eq!(sort_array_by_parity(vec![1]), vec![1]);
         assert_eq!(sort_array_by_parity(vec![2, 4]), vec![2, 4]);
@@ -473,6 +483,24 @@ mod tests {
 
         let mut v2 = vec![0, 1, 2, 2, 3, 0, 4, 2];
         let r2 = remove_element(&mut v2, 2);
+        assert_eq!(r2, 5);
+        assert_eq!(v2[0], 0);
+        assert_eq!(v2[1], 1);
+        assert_eq!(v2[2], 3);
+        assert_eq!(v2[3], 0);
+        assert_eq!(v2[4], 4);
+    }
+
+    #[test]
+    fn test_remove_element2() {
+        let mut v1 = vec![3, 2, 2, 3];
+        let r1 = remove_element2(&mut v1, 3);
+        assert_eq!(r1, 2);
+        assert_eq!(v1[0], 2);
+        assert_eq!(v1[1], 2);
+
+        let mut v2 = vec![0, 1, 2, 2, 3, 0, 4, 2];
+        let r2 = remove_element2(&mut v2, 2);
         assert_eq!(r2, 5);
         assert_eq!(v2[0], 0);
         assert_eq!(v2[1], 1);
