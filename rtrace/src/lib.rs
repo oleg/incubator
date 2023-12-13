@@ -61,6 +61,32 @@ impl std::ops::Neg for Tuple {
     }
 }
 
+impl std::ops::Mul<f32> for Tuple {
+    type Output = Tuple;
+
+    fn mul(self, other: f32) -> Tuple {
+        Tuple::tuple(
+            self.x * other,
+            self.y * other,
+            self.z * other,
+            self.w * other,
+        )
+    }
+}
+
+impl std::ops::Div<f32> for Tuple {
+    type Output = Tuple;
+
+    fn div(self, other: f32) -> Tuple {
+        Tuple::tuple(
+            self.x / other,
+            self.y / other,
+            self.z / other,
+            self.w / other,
+        )
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::Tuple;
@@ -160,9 +186,29 @@ mod tests {
 
         assert_eq!(-a, Tuple::tuple(-1., 2., -3., 4.));
     }
+
+    #[test]
+    fn test_multiplying_a_tuple_by_a_scalar() {
+        let a = Tuple::tuple(1., -2., 3., -4.);
+
+        assert_eq!(a * 3.5, Tuple::tuple(3.5, -7., 10.5, -14.));
+    }
+
+
+    #[test]
+    fn test_multiplying_a_tuple_by_a_fraction() {
+        let a = Tuple::tuple(1., -2., 3., -4.);
+
+        assert_eq!(a * 0.5, Tuple::tuple(0.5, -1., 1.5, -2.));
+    }
+
+    #[test]
+    fn test_dividing_a_tuple_by_a_scalar() {
+        let a = Tuple::tuple(1., -2., 3., -4.);
+
+        assert_eq!(a / 2., Tuple::tuple(0.5, -1., 1.5, -2.));
+    }
 }
-
-
 
 
 /*
