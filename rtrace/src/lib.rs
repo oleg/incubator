@@ -120,7 +120,27 @@ mod tests {
 
         assert_eq!(p1 - p2, Tuple::vector(-2., -4., -6.))
     }
+
+    #[test]
+    fn test_subtracting_vector_from_point() {
+        let p = Tuple::point(3., 2., 1.);
+        let v = Tuple::vector(5., 6., 7.);
+
+        assert_eq!(p - v, Tuple::point(-2., -4., -6.))
+    }
+
+
+    #[test]
+    fn test_subtracting_two_vectors() {
+        let v1 = Tuple::vector(3., 2., 1.);
+        let v2 = Tuple::vector(5., 6., 7.);
+
+        assert_eq!(v1 - v2, Tuple::vector(-2., -4., -6.))
+    }
 }
+
+
+
 
 /*
     //todo add this to partial_eq?
