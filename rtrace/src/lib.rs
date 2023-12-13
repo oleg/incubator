@@ -53,6 +53,14 @@ impl std::ops::Sub for Tuple {
     }
 }
 
+impl std::ops::Neg for Tuple {
+    type Output = Tuple;
+
+    fn neg(self) -> Self::Output {
+        Tuple::tuple(-self.x, -self.y, -self.z, -self.w)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::Tuple;
@@ -136,6 +144,21 @@ mod tests {
         let v2 = Tuple::vector(5., 6., 7.);
 
         assert_eq!(v1 - v2, Tuple::vector(-2., -4., -6.))
+    }
+
+    #[test]
+    fn test_subtracting_a_vector_from_the_zero_vector() {
+        let zero = Tuple::vector(0., 0., 0.);
+        let v = Tuple::vector(1., -2., 3.);
+
+        assert_eq!(zero - v, Tuple::vector(-1., 2., -3.));
+    }
+
+    #[test]
+    fn test_negating_a_tuple() {
+        let a = Tuple::tuple(1., -2., 3., -4.);
+
+        assert_eq!(-a, Tuple::tuple(-1., 2., -3., 4.));
     }
 }
 
