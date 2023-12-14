@@ -1,9 +1,9 @@
 #[derive(Debug, Copy, Clone)]
 pub struct Tuple {
-    x: f32,
-    y: f32,
-    z: f32,
-    w: f32,
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
+    pub w: f32,
 }
 
 impl Tuple {
@@ -11,23 +11,23 @@ impl Tuple {
         Tuple { x, y, z, w }
     }
 
-    fn point(x: f32, y: f32, z: f32) -> Tuple {
+    pub fn point(x: f32, y: f32, z: f32) -> Tuple {
         Tuple { x, y, z, w: 1.0 }
     }
 
-    fn vector(x: f32, y: f32, z: f32) -> Tuple {
+    pub fn vector(x: f32, y: f32, z: f32) -> Tuple {
         Tuple { x, y, z, w: 0.0 }
     }
 
-    fn is_point(&self) -> bool {
+    pub fn is_point(&self) -> bool {
         self.w == 1.0
     }
 
-    fn is_vector(&self) -> bool {
+    pub fn is_vector(&self) -> bool {
         self.w == 0.0
     }
 
-    fn magnitude(&self) -> f32 {
+    pub fn magnitude(&self) -> f32 {
         (self.x.powi(2)
             + self.y.powi(2)
             + self.z.powi(2)
@@ -35,18 +35,18 @@ impl Tuple {
         ).sqrt()
     }
 
-    fn normalize(&self) -> Tuple {
+    pub fn normalize(&self) -> Tuple {
         *self / self.magnitude()
     }
 
-    fn dot(&self, other: Tuple) -> f32 {
+    pub fn dot(&self, other: Tuple) -> f32 {
         self.x * other.x
             + self.y * other.y
             + self.z * other.z
             + self.w * other.w
     }
 
-    fn cross(&self, other: Tuple) -> Tuple {
+    pub fn cross(&self, other: Tuple) -> Tuple {
         Tuple::vector(
             self.y * other.z - self.z * other.y,
             self.z * other.x - self.x * other.z,
@@ -138,8 +138,8 @@ impl std::ops::Div<f32> for Tuple {
 #[cfg(test)]
 mod tests {
     use approx::assert_relative_eq;
-    use crate::Tuple;
     use crate::EPSILON;
+    use crate::Tuple;
 
     #[test]
     fn test_a_tuple_is_a_point() {
