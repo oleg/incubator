@@ -33,6 +33,10 @@ impl Tuple {
             + self.w.powi(2)
         ).sqrt()
     }
+
+    fn normalize(&self) -> Tuple {
+        *self / self.magnitude()
+    }
 }
 
 const EPSILON: f32 = 0.00001;
@@ -278,13 +282,13 @@ mod tests {
     fn test_normalizing_vector_4_0_0_gives_1_0_0() {
         let v = Tuple::vector(4., 0., 0.);
 
-        assert_eq!(v / v.magnitude(), Tuple::vector(1., 0., 0.));
+        assert_eq!(v.normalize(), Tuple::vector(1., 0., 0.));
     }
 
     #[test]
     fn test_normalizing_vector_1_2_3() {
         let v = Tuple::vector(1., 2., 3.);
-        let v = v / v.magnitude();
+        let v = v.normalize();
 
         // vector(1/√14,    2/√14,   3/√14)
         assert_relative_eq!(v.x, 0.26726, epsilon = EPSILON);
@@ -296,7 +300,7 @@ mod tests {
     #[test]
     fn test_magnitude_of_a_normalized_vector() {
         let v = Tuple::vector(1., 2., 3.);
-        let norm = v / v.magnitude();
+        let norm = v.normalize();
 
         assert_relative_eq!(norm.magnitude(), 1., epsilon = EPSILON);
     }
