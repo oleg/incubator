@@ -1,4 +1,4 @@
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Copy, Clone)]
 pub struct Tuple {
     x: f32,
     y: f32,
@@ -25,7 +25,35 @@ impl Tuple {
     fn is_vector(&self) -> bool {
         self.w == 0.0
     }
+
+    fn magnitude(&self) -> f32 {
+        (self.x.powi(2)
+            + self.y.powi(2)
+            + self.z.powi(2)
+            + self.w.powi(2)
+        ).sqrt()
+    }
 }
+
+const EPSILON: f32 = 0.00001;
+
+fn close_enough(a: f32, b: f32) -> bool {
+    (a - b).abs() < EPSILON
+}
+
+impl PartialEq for Tuple {
+    fn eq(&self, other: &Self) -> bool {
+        close_enough(self.x, other.x)
+            && close_enough(self.y, other.y)
+            && close_enough(self.z, other.z)
+            && close_enough(self.w, other.w)
+    }
+
+    fn ne(&self, other: &Self) -> bool {
+        !self.eq(other)
+    }
+}
+
 
 impl std::ops::Add for Tuple {
     type Output = Tuple;
@@ -89,6 +117,8 @@ impl std::ops::Div<f32> for Tuple {
 
 #[cfg(test)]
 mod tests {
+    use approx::assert_relative_eq;
+    use crate::EPSILON;
     use crate::Tuple;
 
     #[test]
@@ -208,17 +238,66 @@ mod tests {
 
         assert_eq!(a / 2., Tuple::tuple(0.5, -1., 1.5, -2.));
     }
+
+    #[test]
+    fn test_magnitude_of_vector_1_0_0() {
+        let v = Tuple::vector(1., 0., 0.);
+
+        assert_eq!(v.magnitude(), 1.);
+    }
+
+    #[test]
+    fn test_magnitude_of_vector_0_1_0() {
+        let v = Tuple::vector(0., 1., 0.);
+
+        assert_eq!(v.magnitude(), 1.);
+    }
+
+    #[test]
+    fn test_magnitude_of_vector_0_0_1() {
+        let v = Tuple::vector(0., 0., 1.);
+
+        assert_eq!(v.magnitude(), 1.);
+    }
+
+    #[test]
+    fn test_magnitude_of_vector_1_2_3() {
+        let v = Tuple::vector(1., 2., 3.);
+
+        assert_eq!(v.magnitude(), 14_f32.sqrt());
+    }
+
+    #[test]
+    fn test_magnitude_of_vector_neg_1_neg_2_neg_3() {
+        let v = Tuple::vector(-1., -2., -3.);
+
+        assert_eq!(v.magnitude(), 14_f32.sqrt());
+    }
+
+    #[test]
+    fn test_normalizing_vector_4_0_0_gives_1_0_0() {
+        let v = Tuple::vector(4., 0., 0.);
+
+        assert_eq!(v / v.magnitude(), Tuple::vector(1., 0., 0.));
+    }
+
+    #[test]
+    fn test_normalizing_vector_1_2_3() {
+        let v = Tuple::vector(1., 2., 3.);
+        let v = v / v.magnitude();
+
+        // vector(1/√14,    2/√14,   3/√14)
+        assert_relative_eq!(v.x, 0.26726, epsilon = EPSILON);
+        assert_relative_eq!(v.y, 0.53452, epsilon = EPSILON);
+        assert_relative_eq!(v.z, 0.80178, epsilon = EPSILON);
+        assert_relative_eq!(v.w, 0.)
+    }
+
+    #[test]
+    fn test_magnitude_of_a_normalized_vector() {
+        let v = Tuple::vector(1., 2., 3.);
+        let norm = v / v.magnitude();
+
+        assert_relative_eq!(norm.magnitude(), 1., epsilon = EPSILON);
+    }
 }
-
-
-/*
-    //todo add this to partial_eq?
- 	constant EPSILON ← 0.00001
- 	function equal(a, b)
- 	  if abs(a - b) < EPSILON
- 	    return true
- 	  else
- 	    return false
- 	  end if
- 	end function
- */
