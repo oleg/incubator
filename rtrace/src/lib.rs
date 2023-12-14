@@ -22,6 +22,7 @@ impl Tuple {
     fn is_point(&self) -> bool {
         self.w == 1.0
     }
+
     fn is_vector(&self) -> bool {
         self.w == 0.0
     }
@@ -36,6 +37,21 @@ impl Tuple {
 
     fn normalize(&self) -> Tuple {
         *self / self.magnitude()
+    }
+
+    fn dot(&self, other: Tuple) -> f32 {
+        self.x * other.x
+            + self.y * other.y
+            + self.z * other.z
+            + self.w * other.w
+    }
+
+    fn cross(&self, other: Tuple) -> Tuple {
+        Tuple::vector(
+            self.y * other.z - self.z * other.y,
+            self.z * other.x - self.x * other.z,
+            self.x * other.y - self.y * other.x,
+        )
     }
 }
 
@@ -75,12 +91,12 @@ impl std::ops::Add for Tuple {
 impl std::ops::Sub for Tuple {
     type Output = Tuple;
 
-    fn sub(self, rhs: Self) -> Self::Output {
+    fn sub(self, other: Self) -> Self::Output {
         Tuple::tuple(
-            self.x - rhs.x,
-            self.y - rhs.y,
-            self.z - rhs.z,
-            self.w - rhs.w,
+            self.x - other.x,
+            self.y - other.y,
+            self.z - other.z,
+            self.w - other.w,
         )
     }
 }
@@ -122,8 +138,8 @@ impl std::ops::Div<f32> for Tuple {
 #[cfg(test)]
 mod tests {
     use approx::assert_relative_eq;
-    use crate::EPSILON;
     use crate::Tuple;
+    use crate::EPSILON;
 
     #[test]
     fn test_a_tuple_is_a_point() {
@@ -303,5 +319,22 @@ mod tests {
         let norm = v.normalize();
 
         assert_relative_eq!(norm.magnitude(), 1., epsilon = EPSILON);
+    }
+
+    #[test]
+    fn test_dot_product_of_two_tuples() {
+        let a = Tuple::vector(1., 2., 3.);
+        let b = Tuple::vector(2., 3., 4.);
+
+        assert_eq!(a.dot(b), 20.);
+    }
+
+    #[test]
+    fn the_cross_product_of_two_vectors() {
+        let a = Tuple::vector(1., 2., 3.);
+        let b = Tuple::vector(2., 3., 4.);
+
+        assert_eq!(a.cross(b), Tuple::vector(-1., 2., -1.));
+        assert_eq!(b.cross(a), Tuple::vector(1., -2., 1.));
     }
 }
