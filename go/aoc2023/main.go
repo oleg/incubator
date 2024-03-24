@@ -12,14 +12,95 @@ import (
 func main() {
 	day := os.Args[1]
 	file := mustReadFile(os.Args[2])
-
 	switch day {
 	case "day1p1":
 		fmt.Println(day1p1(file))
 	case "day1p2":
 		fmt.Println(day1p2(file))
+	case "day2p1":
+		fmt.Println(day2p1(file))
+	case "day2p2":
+		fmt.Println(day2p2(file))
 	}
+}
 
+func day2p1(str string) string {
+	sum := 0
+	for _, s := range strings.Split(str, "\n") {
+		g := parseGame(s)
+		if g.satisfies(round{red: 12, green: 13, blue: 14}) {
+			sum += g.id
+		}
+	}
+	return fmt.Sprintf("%d", sum)
+}
+
+type round struct {
+	red   int
+	green int
+	blue  int
+}
+
+type game struct {
+	id     int
+	rounds []round
+}
+
+func (g game) satisfies(max round) bool {
+	for _, r := range g.rounds {
+		if r.red > max.red || r.green > max.green || r.blue > max.blue {
+			return false
+		}
+	}
+	return true
+}
+
+func parseGame(str string) game {
+	//Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+	gameStr, roundsStr, found := strings.Cut(str, ":")
+	if !found {
+		log.Fatal("no colon found")
+	}
+	id := parseId(gameStr)
+	g := game{id: id}
+	roundsSlice := strings.Split(roundsStr, ";")
+	for _, roundStr := range roundsSlice {
+		r := round{}
+		colors := strings.Split(roundStr, ",")
+		for _, colorStr := range colors {
+			numAndName := strings.Split(strings.TrimSpace(colorStr), " ")
+			num, err := strconv.Atoi(strings.TrimSpace(numAndName[0]))
+			if err != nil {
+				log.Fatal(err)
+			}
+			color := strings.TrimSpace(numAndName[1])
+			switch color {
+			case "blue":
+				r.blue = num
+			case "red":
+				r.red = num
+			case "green":
+				r.green = num
+			default:
+				log.Fatalf("unknown color %s", color)
+			}
+		}
+		g.rounds = append(g.rounds, r)
+	}
+	return g
+}
+
+func parseId(gameStr string) int {
+	idStr := strings.TrimPrefix(gameStr, "Game ")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return id
+}
+
+func day2p2(file string) string {
+	return ""
 }
 
 func day1p1(str string) string {
