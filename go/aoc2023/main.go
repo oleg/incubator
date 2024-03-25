@@ -55,8 +55,27 @@ func (g game) satisfies(max round) bool {
 	return true
 }
 
+func (g game) min() round {
+	m := round{
+		red:   0,
+		green: 0,
+		blue:  0,
+	}
+	for _, r := range g.rounds {
+		if r.red > m.red {
+			m.red = r.red
+		}
+		if r.green > m.green {
+			m.green = r.green
+		}
+		if r.blue > m.blue {
+			m.blue = r.blue
+		}
+	}
+	return m
+}
+
 func parseGame(str string) game {
-	//Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
 	gameStr, roundsStr, found := strings.Cut(str, ":")
 	if !found {
 		log.Fatal("no colon found")
@@ -99,8 +118,14 @@ func parseId(gameStr string) int {
 	return id
 }
 
-func day2p2(file string) string {
-	return ""
+func day2p2(str string) string {
+	sum := 0
+	for _, s := range strings.Split(str, "\n") {
+		g := parseGame(s)
+		r := g.min()
+		sum += r.red * r.green * r.blue
+	}
+	return fmt.Sprintf("%d", sum)
 }
 
 func day1p1(str string) string {
