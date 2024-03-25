@@ -2,6 +2,23 @@ package main
 
 import "testing"
 
+func TestDay3p1(t *testing.T) {
+	result := day3p1(`467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598..
+`)
+	if result != "4361" {
+		t.Errorf("got %s, expected 4361", result)
+	}
+}
+
 func TestDay1p1(t *testing.T) {
 	result := day1p1(`1abc2
 pqr3stu8vwx

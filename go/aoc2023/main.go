@@ -21,7 +21,113 @@ func main() {
 		fmt.Println(day2p1(file))
 	case "day2p2":
 		fmt.Println(day2p2(file))
+	case "day3p1":
+		fmt.Println(day3p1(file))
+	case "day3p2":
+		fmt.Println(day3p2(file))
 	}
+}
+
+type mines [][]int
+
+func (m *mines) mark1(i, j int) {
+	mine := *m
+	if i >= 0 && j >= 0 && i < len(mine) && j < len(mine[i]) {
+		mine[i][j] = 1
+	}
+}
+func (m *mines) mark2(i, j int) {
+	mine := *m
+	if i >= 0 && j >= 0 && i < len(mine) && j < len(mine[i]) {
+		mine[i][j] = 2
+	}
+}
+
+func day3p1(str string) string {
+	nums := make([][]rune, 0)
+	for _, s := range strings.Split(str, "\n") {
+		nums = append(nums, []rune(s))
+	}
+
+	mine := mines{}
+	for i := 0; i < len(nums); i++ {
+		mine = append(mine, make([]int, len(nums[i])))
+		for j := 0; j < len(nums[i]); j++ {
+			if !unicode.IsDigit(nums[i][j]) && nums[i][j] != '.' {
+				mine.mark1(i, j)
+			}
+		}
+	}
+
+	for i := 0; i < len(nums); i++ {
+		for j := 0; j < len(nums[i]); j++ {
+			if mine[i][j] == 1 {
+				mine.mark2(i-1, j-1)
+				mine.mark2(i-1, j)
+				mine.mark2(i-1, j+1)
+
+				mine.mark2(i, j-1)
+				mine.mark2(i, j+1)
+
+				mine.mark2(i+1, j-1)
+				mine.mark2(i+1, j)
+				mine.mark2(i+1, j+1)
+			}
+		}
+	}
+	sum := 0
+
+	for i := 0; i < len(nums); i++ {
+		started := false
+		poisoned := false
+		numStr := ""
+		for j := 0; j < len(nums[i]); j++ {
+			if unicode.IsDigit(nums[i][j]) {
+				numStr += string(nums[i][j])
+				started = true
+				poisoned = poisoned || mine[i][j] > 0
+			} else {
+				//count the last number
+				if started && poisoned {
+					num, err := strconv.Atoi(numStr)
+					if err != nil {
+						log.Fatal(err)
+					}
+					fmt.Printf("number is: %v\n", num)
+					sum += num
+				}
+				numStr = ""
+				poisoned = false
+				started = false
+			}
+		}
+		if started && poisoned {
+			num, err := strconv.Atoi(numStr)
+			if err != nil {
+				log.Fatal(err)
+			}
+			fmt.Printf("number is: %v\n", num)
+			sum += num
+		}
+
+	}
+
+	//printing
+	//for _, s := range strings.Split(str, "\n") {
+	//	fmt.Println(s)
+	//}
+	//for i := 0; i < len(nums); i++ {
+	//	for j := 0; j < len(nums[i]); j++ {
+	//		fmt.Printf("%d", mine[i][j])
+	//	}
+	//	fmt.Printf("\n")
+	//}
+
+	return fmt.Sprintf("%d", sum)
+}
+
+func day3p2(str string) string {
+	panic("not implemented")
 }
 
 func day2p1(str string) string {
