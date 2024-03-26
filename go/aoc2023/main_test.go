@@ -19,6 +19,23 @@ func TestDay3p1(t *testing.T) {
 	}
 }
 
+func TestDay3p2(t *testing.T) {
+	result := day3p2(`467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598..
+`)
+	if result != "467835" {
+		t.Errorf("got %s, expected 467835", result)
+	}
+}
+
 func TestDay1p1(t *testing.T) {
 	result := day1p1(`1abc2
 pqr3stu8vwx

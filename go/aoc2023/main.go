@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"slices"
 	"strconv"
 	"strings"
 	"unicode"
@@ -59,8 +60,8 @@ func day3p1(str string) string {
 		}
 	}
 
-	for i := 0; i < len(nums); i++ {
-		for j := 0; j < len(nums[i]); j++ {
+	for i := 0; i < len(mine); i++ {
+		for j := 0; j < len(mine[i]); j++ {
 			if mine[i][j] == 1 {
 				mine.mark2(i-1, j-1)
 				mine.mark2(i-1, j)
@@ -75,30 +76,28 @@ func day3p1(str string) string {
 			}
 		}
 	}
-	sum := 0
 
+	sum := 0
 	for i := 0; i < len(nums); i++ {
+		numStr := ""
 		started := false
 		poisoned := false
-		numStr := ""
 		for j := 0; j < len(nums[i]); j++ {
 			if unicode.IsDigit(nums[i][j]) {
 				numStr += string(nums[i][j])
 				started = true
 				poisoned = poisoned || mine[i][j] > 0
 			} else {
-				//count the last number
 				if started && poisoned {
 					num, err := strconv.Atoi(numStr)
 					if err != nil {
 						log.Fatal(err)
 					}
-					fmt.Printf("number is: %v\n", num)
 					sum += num
 				}
 				numStr = ""
-				poisoned = false
 				started = false
+				poisoned = false
 			}
 		}
 		if started && poisoned {
@@ -106,28 +105,120 @@ func day3p1(str string) string {
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Printf("number is: %v\n", num)
 			sum += num
 		}
-
+		numStr = ""
+		started = false
+		poisoned = false
 	}
-
-	//printing
-	//for _, s := range strings.Split(str, "\n") {
-	//	fmt.Println(s)
-	//}
-	//for i := 0; i < len(nums); i++ {
-	//	for j := 0; j < len(nums[i]); j++ {
-	//		fmt.Printf("%d", mine[i][j])
-	//	}
-	//	fmt.Printf("\n")
-	//}
 
 	return fmt.Sprintf("%d", sum)
 }
 
+type nums [][]rune
+
+func (n *nums) dig(i, j int) string {
+	num := *n
+	if i >= 0 && j >= 0 && i < len(num) && j < len(num[i]) {
+		if unicode.IsDigit(num[i][j]) {
+			return "1"
+		}
+	}
+	return "0"
+}
+
+type cells [][]int
+
+func (c *cells) ids(i, j int) []int {
+	m := make(map[int]bool)
+
+	m[c.d(i-1, j-1)] = true
+	m[c.d(i-1, j)] = true
+	m[c.d(i-1, j+1)] = true
+
+	m[c.d(i, j-1)] = true
+	m[c.d(i, j)] = true
+	m[c.d(i, j+1)] = true
+
+	m[c.d(i+1, j-1)] = true
+	m[c.d(i+1, j)] = true
+	m[c.d(i+1, j+1)] = true
+
+	keys := make([]int, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	return keys
+}
+
+func (c *cells) d(i, j int) int {
+	cs := *c
+	if i >= 0 && j >= 0 && i < len(cs) && j < len(cs[i]) {
+		return cs[i][j]
+	}
+	return 0
+}
+
 func day3p2(str string) string {
-	panic("not implemented")
+	num := nums{}
+	for _, s := range strings.Split(str, "\n") {
+		num = append(num, []rune(s))
+	}
+
+	mapping := make(map[int]int)
+	cs := cells{}
+	id := 1
+	digits := false
+	digStr := ""
+	for i := 0; i < len(num); i++ {
+		cs = append(cs, make([]int, len(num[i])))
+
+		for j := 0; j < len(num[i]); j++ {
+			if unicode.IsDigit(num[i][j]) {
+				cs[i][j] = id
+				digStr += string(num[i][j])
+				digits = true
+			} else {
+				cs[i][j] = 0
+				if digits {
+					num, err := strconv.Atoi(digStr)
+					if err != nil {
+						log.Fatal(err)
+					}
+					mapping[id] = num
+					id++
+				}
+				digits = false
+				digStr = ""
+			}
+		}
+		if digits {
+			num, err := strconv.Atoi(digStr)
+			if err != nil {
+				log.Fatal(err)
+			}
+			mapping[id] = num
+			id++
+		}
+		digits = false
+		digStr = ""
+	}
+
+	sum := 0
+	for i := 0; i < len(num); i++ {
+		for j := 0; j < len(num[i]); j++ {
+			if num[i][j] == '*' {
+				ids := cs.ids(i, j)
+				if len(ids) == 3 {
+					slices.Sort(ids)
+					a := mapping[ids[1]]
+					b := mapping[ids[2]]
+					sum += a * b
+				}
+			}
+		}
+	}
+	return fmt.Sprintf("%d", sum)
 }
 
 func day2p1(str string) string {
