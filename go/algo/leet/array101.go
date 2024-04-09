@@ -106,3 +106,34 @@ func countZeros(arr []int) int {
 	}
 	return zeros
 }
+
+func merge(nums1 []int, m int, nums2 []int, n int) {
+	i := m - 1
+	j := n - 1
+	t := m + n - 1
+	for t >= 0 && i >= 0 && j >= 0 {
+		if nums1[i] >= nums2[j] {
+			nums1[t] = nums1[i]
+			t--
+			i--
+		} else {
+			nums1[t] = nums2[j]
+			t--
+			j--
+		}
+	}
+	if i >= 0 {
+		for t >= 0 {
+			nums1[t] = nums1[i]
+			t--
+			i--
+		}
+	}
+	if j >= 0 {
+		for t >= 0 {
+			nums1[t] = nums2[j]
+			t--
+			j--
+		}
+	}
+}
