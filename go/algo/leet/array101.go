@@ -150,3 +150,25 @@ func removeDuplicates(nums []int) int {
 	}
 	return t
 }
+
+func checkIfExist(arr []int) bool {
+	seen := make(map[int]bool)
+	for _, v := range arr {
+		if seen[v*2] || (v%2 == 0 && seen[v/2]) {
+			return true
+		}
+		seen[v] = true
+	}
+	return false
+}
+
+func checkIfExistV2(arr []int) bool {
+	for i := 0; i < len(arr); i++ {
+		for j := i + 1; j < len(arr); j++ {
+			if arr[i] == 2*arr[j] || 2*arr[i] == arr[j] {
+				return true
+			}
+		}
+	}
+	return false
+}
