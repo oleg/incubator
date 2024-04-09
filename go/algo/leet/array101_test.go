@@ -172,3 +172,44 @@ func Test_merge(t *testing.T) {
 		})
 	}
 }
+
+func Test_removeElement(t *testing.T) {
+	type args struct {
+		nums []int
+		val  int
+	}
+	type want struct {
+		answer  int
+		content []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want want
+	}{
+		{
+			"example 1",
+			args{nums: []int{3, 2, 2, 3}, val: 3},
+			want{answer: 2, content: []int{2, 2}},
+		},
+		{
+			"example 2",
+			args{nums: []int{0, 1, 2, 2, 3, 0, 4, 2}, val: 2},
+			want{answer: 5, content: []int{0, 0, 1, 3, 4}},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := removeElement(tt.args.nums, tt.args.val)
+			content := tt.args.nums[0:got]
+			slices.Sort(content)
+
+			if got != tt.want.answer {
+				t.Errorf("removeElement() = %v, want %v", got, tt.want.answer)
+			}
+			if !slices.Equal(content, tt.want.content) {
+				t.Errorf("content %v, want %v", content, tt.want.content)
+			}
+		})
+	}
+}

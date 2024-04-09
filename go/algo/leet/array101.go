@@ -110,30 +110,27 @@ func countZeros(arr []int) int {
 func merge(nums1 []int, m int, nums2 []int, n int) {
 	i := m - 1
 	j := n - 1
-	t := m + n - 1
-	for t >= 0 && i >= 0 && j >= 0 {
-		if nums1[i] >= nums2[j] {
+	for t := m + n - 1; t >= 0; t-- {
+		if j < 0 {
+			break
+		}
+		if i >= 0 && nums1[i] >= nums2[j] {
 			nums1[t] = nums1[i]
-			t--
 			i--
 		} else {
 			nums1[t] = nums2[j]
-			t--
 			j--
 		}
 	}
-	if i >= 0 {
-		for t >= 0 {
-			nums1[t] = nums1[i]
-			t--
-			i--
+}
+
+func removeElement(nums []int, val int) int {
+	t := 0
+	for i := 0; i < len(nums); i++ {
+		if nums[i] != val {
+			nums[t] = nums[i]
+			t++
 		}
 	}
-	if j >= 0 {
-		for t >= 0 {
-			nums1[t] = nums2[j]
-			t--
-			j--
-		}
-	}
+	return t
 }
