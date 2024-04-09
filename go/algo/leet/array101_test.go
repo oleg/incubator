@@ -213,3 +213,48 @@ func Test_removeElement(t *testing.T) {
 		})
 	}
 }
+
+func Test_removeDuplicates(t *testing.T) {
+	type args struct {
+		nums []int
+	}
+	type want struct {
+		answer  int
+		content []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want want
+	}{
+		{
+			"example 1",
+			args{nums: []int{1, 1, 2}},
+			want{answer: 2, content: []int{1, 2}},
+		},
+		{
+			"example 2",
+			args{nums: []int{0, 0, 1, 1, 1, 2, 2, 3, 3, 4}},
+			want{answer: 5, content: []int{0, 1, 2, 3, 4}},
+		},
+		{
+			"example 3",
+			args{nums: []int{1}},
+			want{answer: 1, content: []int{1}},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := removeDuplicates(tt.args.nums)
+			content := tt.args.nums[0:got]
+			slices.Sort(content)
+
+			if got != tt.want.answer {
+				t.Errorf("removeDuplicates() = %v, want %v", got, tt.want.answer)
+			}
+			if !slices.Equal(content, tt.want.content) {
+				t.Errorf("content %v, want %v", content, tt.want.content)
+			}
+		})
+	}
+}

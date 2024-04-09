@@ -134,3 +134,19 @@ func removeElement(nums []int, val int) int {
 	}
 	return t
 }
+
+func removeDuplicates(nums []int) int {
+	if len(nums) <= 1 {
+		return len(nums)
+	}
+	prev := nums[0]
+	t := 1
+	for i := 1; i < len(nums); i++ {
+		if nums[i] != prev {
+			nums[t] = nums[i]
+			prev = nums[i]
+			t++
+		}
+	}
+	return t
+}
