@@ -61,7 +61,7 @@ func (i *index) Read(in int64) (uint32, uint64, error) {
 	} else {
 		out = uint32(in)
 	}
-	
+
 	pos := uint64(out) * entWidth
 	if i.size < pos+entWidth {
 		return 0, 0, io.EOF
