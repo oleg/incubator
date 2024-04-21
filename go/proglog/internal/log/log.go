@@ -1,7 +1,6 @@
 package log
 
 import (
-	"fmt"
 	api "github.com/oleg/incubator/go/proglog/api/v1"
 	"io"
 	"os"
@@ -88,7 +87,7 @@ func (l *Log) Read(off uint64) (*api.Record, error) {
 		return seg.baseOffset <= off && off < seg.nextOffset
 	})
 	if i < 0 || l.segments[i].nextOffset <= off {
-		return nil, fmt.Errorf("offset out of range: %d", off)
+		return nil, api.ErrOffsetOutOfRange{Offset: off}
 	}
 	return l.segments[i].Read(off)
 }
