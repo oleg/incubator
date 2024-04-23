@@ -1,0 +1,16 @@
+{
+  "CN": "Incubator",
+  "key": {
+    "algo": "rsa",
+    "size": 2048
+  },
+  "names": [
+    {
+      "C": "Germany",
+      "L": "Berlin",
+      "ST": "Berlin",
+      "O": "Incubator",
+      "OU": "Incubator"
+    }
+  ]
+}
