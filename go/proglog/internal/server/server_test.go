@@ -3,10 +3,11 @@ package server
 import (
 	"context"
 	api "github.com/oleg/incubator/go/proglog/api/v1"
+	"github.com/oleg/incubator/go/proglog/internal/config"
 	"github.com/oleg/incubator/go/proglog/internal/log"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/status"
 	"net"
 	"os"
@@ -35,37 +36,48 @@ func TestServer(t *testing.T) {
 func setupTest(t *testing.T, fn func(*Config)) (api.LogClient, *Config, func()) {
 	t.Helper()
 
-	l, err := net.Listen("tcp", ":0")
+	l, err := net.Listen("tcp", "127.0.0.1:0")
 	require.NoError(t, err)
-
-	clientOptions := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	clientTLSConfig, err := config.SetupTLSConfig(config.TLSConfig{
+		CAFile: config.CAFile,
+	})
+	require.NoError(t, err)
+	clientCredentials := credentials.NewTLS(clientTLSConfig)
+	clientOptions := []grpc.DialOption{grpc.WithTransportCredentials(clientCredentials)}
 	cc, err := grpc.Dial(l.Addr().String(), clientOptions...)
 	require.NoError(t, err)
 
+	client := api.NewLogClient(cc)
+
+	serverTLSConfig, err := config.SetupTLSConfig(config.TLSConfig{
+		CertFile:      config.ServerCertFile,
+		KeyFile:       config.ServerKeyFile,
+		CAFile:        config.CAFile,
+		ServerAddress: l.Addr().String(),
+	})
+	require.NoError(t, err)
+	serverCredentials := credentials.NewTLS(serverTLSConfig)
+
 	dir, err := os.MkdirTemp("", "server-test")
 	require.NoError(t, err)
-
 	clog, err := log.NewLog(dir, log.Config{})
 	require.NoError(t, err)
-
 	cfg := &Config{CommitLog: clog}
 	if fn != nil {
 		fn(cfg)
 	}
-	server, err := NewGRPCServer(cfg)
+	server, err := NewGRPCServer(cfg, grpc.Creds(serverCredentials))
 	require.NoError(t, err)
 
 	go func() {
 		server.Serve(l)
 	}()
 
-	clinet := api.NewLogClient(cc)
-
-	return clinet, cfg, func() {
+	return client, cfg, func() {
 		server.Stop()
 		cc.Close()
 		l.Close()
-		clog.Remove()
+		//clog.Remove()
 	}
 }
 
