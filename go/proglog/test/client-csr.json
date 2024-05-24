@@ -1,5 +1,8 @@
 {
-  "CN": "Incubator Server",
+  "CN": "Incubator Client",
+  "hosts": [
+    ""
+  ],
   "key": {
     "algo": "rsa",
     "size": 2048
