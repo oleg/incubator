@@ -1,4 +1,4 @@
-module github.com/oleg/incubator/go/clig/wc
+module github.com/oleg/incubator/go/cli/wc
 
 go 1.22.3
 
