@@ -19,14 +19,12 @@ type item struct {
 type List []item
 
 func (l *List) Add(task string) {
-	t := item{
+	*l = append(*l, item{
 		Task:        task,
 		Done:        false,
 		CreatedAt:   time.Now(),
 		CompletedAt: time.Time{},
-	}
-
-	*l = append(*l, t)
+	})
 }
 
 func (l *List) Complete(i int) error {
