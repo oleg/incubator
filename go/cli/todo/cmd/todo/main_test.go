@@ -49,6 +49,6 @@ func TestTodoCli(t *testing.T) {
 		cmd := exec.Command(cmdPath, "-list")
 		out, err := cmd.CombinedOutput()
 		assert.NoError(t, err)
-		assert.Equal(t, task+"\n", string(out))
+		assert.Equal(t, fmt.Sprintf("  1: %s\n\n", task), string(out))
 	})
 }
