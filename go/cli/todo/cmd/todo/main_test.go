@@ -3,6 +3,7 @@ package main_test
 import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -40,9 +41,19 @@ func TestTodoCli(t *testing.T) {
 
 	cmdPath := filepath.Join(dir, binName)
 
-	t.Run("AddNewTask", func(t *testing.T) {
-		cmd := exec.Command(cmdPath, "-task", task)
+	t.Run("AddNewTaskFromArguments", func(t *testing.T) {
+		cmd := exec.Command(cmdPath, "-add", task)
 		err := cmd.Run()
+		assert.NoError(t, err)
+	})
+	task2 := "test task number 2"
+	t.Run("AddNewTaskFromSTDIN", func(t *testing.T) {
+		cmd := exec.Command(cmdPath, "-add", task)
+		cmdStdIn, err := cmd.StdinPipe()
+		assert.NoError(t, err)
+		io.WriteString(cmdStdIn, task2)
+		cmdStdIn.Close()
+		err = cmd.Run()
 		assert.NoError(t, err)
 	})
 	t.Run("ListTasks", func(t *testing.T) {
