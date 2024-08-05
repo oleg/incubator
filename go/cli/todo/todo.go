@@ -18,22 +18,22 @@ type item struct {
 
 type List []item
 
-func (l *List) Add(task string) {
+func (l *List) Add(task string, now time.Time) {
 	*l = append(*l, item{
 		Task:        task,
 		Done:        false,
-		CreatedAt:   time.Now(),
+		CreatedAt:   now,
 		CompletedAt: time.Time{},
 	})
 }
 
-func (l *List) Complete(i int) error {
+func (l *List) Complete(i int, now time.Time) error {
 	ls := *l
 	if i <= 0 || i > len(ls) {
 		return fmt.Errorf("item %d does not exist", i)
 	}
 	ls[i-1].Done = true
-	ls[i-1].CompletedAt = time.Now()
+	ls[i-1].CompletedAt = now
 	return nil
 }
 
@@ -76,6 +76,24 @@ func (l *List) String() string {
 			prefix = "X "
 		}
 		formatted += fmt.Sprintf("%s%d: %s\n", prefix, k+1, t.Task)
+	}
+	return formatted
+}
+
+func (l *List) ExtendedSting() string {
+	formatted := ""
+	for k, t := range *l {
+		prefix := "  "
+		if t.Done {
+			prefix = "X "
+		}
+		created := t.CreatedAt.Format(time.RFC3339)
+		completed := ""
+		if !t.CompletedAt.IsZero() {
+			completed = " - " + t.CompletedAt.Format(time.RFC3339)
+		}
+		formatted += fmt.Sprintf("%s%d: %s %s%s\n",
+			prefix, k+1, t.Task, created, completed)
 	}
 	return formatted
 }

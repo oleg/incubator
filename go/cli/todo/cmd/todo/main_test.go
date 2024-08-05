@@ -34,25 +34,27 @@ func TestMain(m *testing.M) {
 }
 
 func TestTodoCli(t *testing.T) {
-	task := "test task number 1"
 
 	dir, err := os.Getwd()
 	assert.NoError(t, err)
 
 	cmdPath := filepath.Join(dir, binName)
 
+	task1 := "test task number 1"
 	t.Run("AddNewTaskFromArguments", func(t *testing.T) {
-		cmd := exec.Command(cmdPath, "-add", task)
+		cmd := exec.Command(cmdPath, "-add", task1)
 		err := cmd.Run()
 		assert.NoError(t, err)
 	})
 	task2 := "test task number 2"
 	t.Run("AddNewTaskFromSTDIN", func(t *testing.T) {
-		cmd := exec.Command(cmdPath, "-add", task)
+		cmd := exec.Command(cmdPath, "-add")
 		cmdStdIn, err := cmd.StdinPipe()
 		assert.NoError(t, err)
-		io.WriteString(cmdStdIn, task2)
-		cmdStdIn.Close()
+		_, err = io.WriteString(cmdStdIn, task2)
+		assert.NoError(t, err)
+		err = cmdStdIn.Close()
+		assert.NoError(t, err)
 		err = cmd.Run()
 		assert.NoError(t, err)
 	})
@@ -60,6 +62,6 @@ func TestTodoCli(t *testing.T) {
 		cmd := exec.Command(cmdPath, "-list")
 		out, err := cmd.CombinedOutput()
 		assert.NoError(t, err)
-		assert.Equal(t, fmt.Sprintf("  1: %s\n\n", task), string(out))
+		assert.Equal(t, fmt.Sprintf("  1: %s\n  2: %s\n\n", task1, task2), string(out))
 	})
 }

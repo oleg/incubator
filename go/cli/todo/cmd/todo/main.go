@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"strings"
+	"time"
 )
 
 var todoFileName = ".todo.json"
@@ -21,6 +22,7 @@ func main() {
 
 	add := flag.Bool("add", false, "Add task to the ToDo list")
 	list := flag.Bool("list", false, "List all tasks")
+	verbose := flag.Bool("v", false, "Verbose mode")
 	complete := flag.Int("complete", 0, "Item to be completed")
 	del := flag.Int("del", 0, "Item to be deleted")
 	flag.Parse()
@@ -37,9 +39,13 @@ func main() {
 
 	switch {
 	case *list:
-		fmt.Println(l)
+		if *verbose {
+			fmt.Println(l.ExtendedSting())
+		} else {
+			fmt.Println(l.String())
+		}
 	case *complete > 0:
-		if err := l.Complete(*complete); err != nil {
+		if err := l.Complete(*complete, time.Now()); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
@@ -62,7 +68,7 @@ func main() {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
-		l.Add(t)
+		l.Add(t, time.Now())
 
 		if err := l.Save(todoFileName); err != nil {
 			fmt.Fprintln(os.Stderr, err)
