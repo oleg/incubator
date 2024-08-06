@@ -1,11 +1,9 @@
-use std::error::Error;
 use std::fs;
 
+use anyhow::Result;
 use assert_cmd::Command;
 use predicates::prelude::*;
 use rand::{distributions::Alphanumeric, Rng};
-
-type TestResult = Result<(), Box<dyn Error>>;
 
 const PRG: &str = "catr";
 const EMPTY: &str = "tests/inputs/empty.txt";
@@ -14,20 +12,17 @@ const SPIDERS: &str = "tests/inputs/spiders.txt";
 const BUSTLE: &str = "tests/inputs/the-bustle.txt";
 
 #[test]
-fn usage() -> TestResult {
+fn usage() -> Result<()> {
     for flag in &["-h", "--help"] {
-        Command::cargo_bin(PRG)?
-            .arg(flag)
-            .assert()
-            .stdout(predicate::str::contains("USAGE"));
+        Command::cargo_bin(PRG)?.arg(flag).assert().stdout(predicate::str::contains("Usage"));
     }
     Ok(())
 }
 
 #[test]
-fn skips_bad_file() -> TestResult {
+fn skips_bad_file() -> Result<()> {
     let bad = gen_bad_file();
-    let expected = format!("{}: .* [(]os error 2[)]", bad);
+    let expected = format!("{bad}: .* [(]os error 2[)]");
     Command::cargo_bin(PRG)?
         .arg(&bad)
         .assert()
@@ -37,110 +32,99 @@ fn skips_bad_file() -> TestResult {
 }
 
 #[test]
-fn bustle_stdin() -> TestResult {
+fn bustle_stdin() -> Result<()> {
     run_stdin(BUSTLE, &["-"], "tests/expected/the-bustle.txt.stdin.out")
 }
 
 #[test]
-fn bustle_stdin_n() -> TestResult {
-    run_stdin(
-        BUSTLE,
-        &["-n", "-"],
-        "tests/expected/the-bustle.txt.n.stdin.out",
-    )
+fn bustle_stdin_n() -> Result<()> {
+    run_stdin(BUSTLE, &["-n", "-"], "tests/expected/the-bustle.txt.n.stdin.out")
 }
 
 #[test]
-fn bustle_stdin_b() -> TestResult {
-    run_stdin(
-        BUSTLE,
-        &["-b", "-"],
-        "tests/expected/the-bustle.txt.b.stdin.out",
-    )
+fn bustle_stdin_b() -> Result<()> {
+    run_stdin(BUSTLE, &["-b", "-"], "tests/expected/the-bustle.txt.b.stdin.out")
 }
 
 #[test]
-fn empty() -> TestResult {
+fn empty() -> Result<()> {
     run(&[EMPTY], "tests/expected/empty.txt.out")
 }
 
 #[test]
-fn empty_n() -> TestResult {
+fn empty_n() -> Result<()> {
     run(&["-n", EMPTY], "tests/expected/empty.txt.n.out")
 }
 
 #[test]
-fn empty_b() -> TestResult {
+fn empty_b() -> Result<()> {
     run(&["-b", EMPTY], "tests/expected/empty.txt.b.out")
 }
 
 #[test]
-fn fox() -> TestResult {
+fn fox() -> Result<()> {
     run(&[FOX], "tests/expected/fox.txt.out")
 }
 
 #[test]
-fn fox_n() -> TestResult {
+fn fox_n() -> Result<()> {
     run(&["-n", FOX], "tests/expected/fox.txt.n.out")
 }
 
 #[test]
-fn fox_b() -> TestResult {
+fn fox_b() -> Result<()> {
     run(&["-b", FOX], "tests/expected/fox.txt.b.out")
 }
 
 #[test]
-fn spiders() -> TestResult {
+fn spiders() -> Result<()> {
     run(&[SPIDERS], "tests/expected/spiders.txt.out")
 }
 
 #[test]
-fn spiders_n() -> TestResult {
+fn spiders_n() -> Result<()> {
     run(&["--number", SPIDERS], "tests/expected/spiders.txt.n.out")
 }
 
 #[test]
-fn spiders_b() -> TestResult {
-    run(
-        &["--number-nonblank", SPIDERS],
-        "tests/expected/spiders.txt.b.out",
-    )
+fn spiders_b() -> Result<()> {
+    run(&["--number-nonblank", SPIDERS], "tests/expected/spiders.txt.b.out")
 }
 
 #[test]
-fn bustle() -> TestResult {
+fn bustle() -> Result<()> {
     run(&[BUSTLE], "tests/expected/the-bustle.txt.out")
 }
 
 #[test]
-fn bustle_n() -> TestResult {
+fn bustle_n() -> Result<()> {
     run(&["-n", BUSTLE], "tests/expected/the-bustle.txt.n.out")
 }
 
 #[test]
-fn bustle_b() -> TestResult {
+fn bustle_b() -> Result<()> {
     run(&["-b", BUSTLE], "tests/expected/the-bustle.txt.b.out")
 }
 
 #[test]
-fn all() -> TestResult {
+fn all() -> Result<()> {
     run(&[FOX, SPIDERS, BUSTLE], "tests/expected/all.out")
 }
 
 #[test]
-fn all_n() -> TestResult {
+fn all_n() -> Result<()> {
     run(&[FOX, SPIDERS, BUSTLE, "-n"], "tests/expected/all.n.out")
 }
 
 #[test]
-fn all_b() -> TestResult {
+fn all_b() -> Result<()> {
     run(&[FOX, SPIDERS, BUSTLE, "-b"], "tests/expected/all.b.out")
 }
 
 fn gen_bad_file() -> String {
     loop {
         let filename: String = rand::thread_rng()
-            .sample_iter(&Alphanumeric)
+            .sample_iter(&Alphanumeric) //
             .take(7)
             .map(char::from)
             .collect();
@@ -151,24 +135,27 @@ fn gen_bad_file() -> String {
     }
 }
 
-fn run(args: &[&str], expected_file: &str) -> TestResult {
+fn run(args: &[&str], expected_file: &str) -> Result<()> {
     let expected = fs::read_to_string(expected_file)?;
-    Command::cargo_bin(PRG)?
-        .args(args)
-        .assert()
-        .success()
-        .stdout(expected);
+
+    let output = Command::cargo_bin(PRG)?.args(args).output().unwrap();
+    assert!(output.status.success());
+
+    let stdout = String::from_utf8(output.stdout).expect("Invalid UTF-8");
+    assert_eq!(stdout, expected);
+
     Ok(())
 }
 
-fn run_stdin(input_file: &str, args: &[&str], expected_file: &str) -> TestResult {
+fn run_stdin(input_file: &str, args: &[&str], expected_file: &str) -> Result<()> {
     let input = fs::read_to_string(input_file)?;
     let expected = fs::read_to_string(expected_file)?;
-    Command::cargo_bin(PRG)?
-        .args(args)
-        .write_stdin(input)
-        .assert()
-        .success()
-        .stdout(expected);
+
+    let output = Command::cargo_bin(PRG)?.write_stdin(input).args(args).output().unwrap();
+    assert!(output.status.success());
+
+    let stdout = String::from_utf8(output.stdout).expect("Invalid UTF-8");
+    assert_eq!(stdout, expected);
+
     Ok(())
 }
