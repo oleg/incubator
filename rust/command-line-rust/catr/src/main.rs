@@ -36,11 +36,11 @@ fn run(args: Args) -> Result<()> {
             Err(err) => eprintln!("Failed to open file: {filename}: {err}"),
             Ok(r) => {
                 let mut line_number = 0;
-                for maybe_line in r.lines() {
-                    let line = maybe_line?;
+                for line in r.lines() {
+                    let line = line?;
                     if args.number_lines || args.number_nonblank_lines && !line.is_empty() {
                         line_number += 1;
-                        println!("{line_number:6}\t{line}");
+                        println!("{line_number:>6}\t{line}");
                     } else {
                         println!("{line}");
                     }
