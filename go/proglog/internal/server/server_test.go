@@ -39,25 +39,27 @@ func setupTest(t *testing.T, fn func(*Config)) (api.LogClient, *Config, func()) 
 	l, err := net.Listen("tcp", "127.0.0.1:0")
 	require.NoError(t, err)
 	clientTLSConfig, err := config.SetupTLSConfig(config.TLSConfig{
-		CAFile: config.CAFile,
+		CertFile: config.ClientCertFile,
+		KeyFile:  config.ClientKeyFile,
+		CAFile:   config.CAFile,
 	})
 	require.NoError(t, err)
-	clientCredentials := credentials.NewTLS(clientTLSConfig)
-	clientOptions := []grpc.DialOption{grpc.WithTransportCredentials(clientCredentials)}
-	cc, err := grpc.Dial(l.Addr().String(), clientOptions...)
-	require.NoError(t, err)
 
-	client := api.NewLogClient(cc)
+	clientConn, err := grpc.NewClient(
+		l.Addr().String(),
+		grpc.WithTransportCredentials(credentials.NewTLS(clientTLSConfig)),
+	)
+	require.NoError(t, err)
+	client := api.NewLogClient(clientConn)
 
 	serverTLSConfig, err := config.SetupTLSConfig(config.TLSConfig{
 		CertFile:      config.ServerCertFile,
 		KeyFile:       config.ServerKeyFile,
 		CAFile:        config.CAFile,
 		ServerAddress: l.Addr().String(),
+		Server:        true,
 	})
 	require.NoError(t, err)
-	serverCredentials := credentials.NewTLS(serverTLSConfig)
-
 	dir, err := os.MkdirTemp("", "server-test")
 	require.NoError(t, err)
 	clog, err := log.NewLog(dir, log.Config{})
@@ -66,7 +68,10 @@ func setupTest(t *testing.T, fn func(*Config)) (api.LogClient, *Config, func()) 
 	if fn != nil {
 		fn(cfg)
 	}
-	server, err := NewGRPCServer(cfg, grpc.Creds(serverCredentials))
+	server, err := NewGRPCServer(
+		cfg,
+		grpc.Creds(credentials.NewTLS(serverTLSConfig)),
+	)
 	require.NoError(t, err)
 
 	go func() {
@@ -75,7 +80,7 @@ func setupTest(t *testing.T, fn func(*Config)) (api.LogClient, *Config, func()) 
 
 	return client, cfg, func() {
 		server.Stop()
-		cc.Close()
+		clientConn.Close()
 		l.Close()
 		//clog.Remove()
 	}
