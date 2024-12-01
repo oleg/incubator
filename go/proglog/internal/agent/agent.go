@@ -89,7 +89,7 @@ func (a *Agent) setupServer() error {
 	authorizer := auth.New(a.Config.ACLModelFile, a.Config.ACLPolicyFile)
 	serverConfig := &server.Config{CommitLog: a.log, Authorizer: authorizer}
 	var opts []grpc.ServerOption
-	if a.ServerTLSConfig != nil {
+	if a.Config.ServerTLSConfig != nil {
 		creds := credentials.NewTLS(a.Config.ServerTLSConfig)
 		opts = append(opts, grpc.Creds(creds))
 	}
@@ -98,11 +98,11 @@ func (a *Agent) setupServer() error {
 	if err != nil {
 		return err
 	}
-	addr, err := a.RPCAddr()
+	rpcAddr, err := a.RPCAddr()
 	if err != nil {
 		return err
 	}
-	ln, err := net.Listen("tcp", addr)
+	ln, err := net.Listen("tcp", rpcAddr)
 	if err != nil {
 		return err
 	}
@@ -121,7 +121,9 @@ func (a *Agent) setupMembership() error {
 	}
 	var opts []grpc.DialOption
 	if a.Config.PeerTLSConfig != nil {
-		opts = append(opts, grpc.WithTransportCredentials(credentials.NewTLS(a.Config.PeerTLSConfig)))
+		opts = append(opts, grpc.WithTransportCredentials(
+			credentials.NewTLS(a.Config.PeerTLSConfig),
+		))
 	}
 	conn, err := grpc.Dial(rpcAddr, opts...)
 	if err != nil {
@@ -132,11 +134,11 @@ func (a *Agent) setupMembership() error {
 		DialOptions: opts,
 		LocalServer: client,
 	}
-	discovery.New(a.replicator, discovery.Config{
+	a.membership, err = discovery.New(a.replicator, discovery.Config{
 		NodeName:       a.Config.NodeName,
 		BindAddr:       a.Config.BindAddr,
 		Tags:           map[string]string{"rpc_addr": rpcAddr},
-		StartJoinAddrs: a.StartJoinAddrs,
+		StartJoinAddrs: a.Config.StartJoinAddrs,
 	})
 	return err
 }
@@ -149,6 +151,7 @@ func (a *Agent) Shutdown() error {
 	}
 	a.shutdown = true
 	close(a.shutdowns)
+
 	shutdown := []func() error{
 		a.membership.Leave,
 		a.replicator.Close,
@@ -157,7 +160,6 @@ func (a *Agent) Shutdown() error {
 			return nil
 		},
 		a.log.Close,
-		//
 	}
 	for _, fn := range shutdown {
 		if err := fn(); err != nil {
