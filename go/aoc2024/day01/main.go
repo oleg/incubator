@@ -28,19 +28,13 @@ func main() {
 
 func similarityScore(left []int, right []int) int {
 	counts := make(map[int]int)
+	for _, r := range right {
+		counts[r]++
+	}
 
 	sum := 0
 	for _, l := range left {
-		c, ok := counts[l]
-		if !ok {
-			for _, r := range right {
-				if l == r {
-					c++
-				}
-			}
-			counts[l] = c
-		}
-		sum += l * c
+		sum += l * counts[l]
 	}
 	return sum
 }
