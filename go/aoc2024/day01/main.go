@@ -1,38 +1,59 @@
 package main
 
 import (
+	"bufio"
 	"github.com/oleg/incubator/aoc2024/misc"
+	"math"
+	"sort"
 )
 
 func main() {
-	ints := misc.MustReadInts(misc.MustOpen("day1/input.txt"))
+	reader := misc.MustOpen("day01/input.txt")
+	scanner := bufio.NewScanner(reader)
 
-	a1, b1 := find1(ints)
-	println(a1 * b1)
-	a2, b2, c2 := find2(ints)
-	println(a2 * b2 * c2)
-}
-
-func find1(input []int) (int, int) {
-	for _, a := range input {
-		for _, b := range input {
-			if a != b && a+b == 2020 {
-				return a, b
-			}
-		}
+	left := make([]int, 0)
+	right := make([]int, 0)
+	for scanner.Scan() {
+		text := scanner.Text()
+		l, r := parseLine(text)
+		left = append(left, l)
+		right = append(right, r)
 	}
-	return 0, 0
+	sort.Ints(left)
+	sort.Ints(right)
+
+	println(sumOfDiffs(left, right))
+	println(similarityScore(left, right))
 }
 
-func find2(input []int) (int, int, int) {
-	for _, a := range input {
-		for _, b := range input {
-			for _, c := range input {
-				if a != b && a != c && b != c && a+b+c == 2020 {
-					return a, b, c
+func similarityScore(left []int, right []int) int {
+	counts := make(map[int]int)
+
+	sum := 0
+	for _, l := range left {
+		c, ok := counts[l]
+		if !ok {
+			for _, r := range right {
+				if l == r {
+					c++
 				}
 			}
+			counts[l] = c
 		}
+		sum += l * c
 	}
-	return 0, 0, 0
+	return sum
+}
+
+func sumOfDiffs(left []int, right []int) int {
+	sum := 0.
+	for i, l := range left {
+		r := right[i]
+		sum += math.Abs(float64(l - r))
+	}
+	return int(sum)
+}
+
+func parseLine(text string) (int, int) {
+	return misc.MustAtoi(text[:5]), misc.MustAtoi(text[8:])
 }
