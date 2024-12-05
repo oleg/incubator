@@ -39,3 +39,9 @@ func MustAtoi(str string) int {
 	}
 	return num
 }
+
+func Copy[T any](slice []T) []T {
+	aCopy := make([]T, len(slice))
+	copy(aCopy, slice)
+	return aCopy
+}
