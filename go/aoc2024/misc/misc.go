@@ -2,9 +2,11 @@ package misc
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"os"
 	"strconv"
+	"strings"
 )
 
 func MustOpen(filename string) io.Reader {
@@ -44,4 +46,12 @@ func Copy[T any](slice []T) []T {
 	aCopy := make([]T, len(slice))
 	copy(aCopy, slice)
 	return aCopy
+}
+
+func MustCut(s, sep string) (before, after string) {
+	before, after, found := strings.Cut(s, sep)
+	if !found {
+		panic(fmt.Sprintf("separator %q not found in %q", sep, s))
+	}
+	return before, after
 }

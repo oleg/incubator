@@ -7,8 +7,6 @@ import (
 
 func main() {
 	content := misc.MustReadFileToString("day06/input.txt")
-	//5067
-	//1793
 	m := NewMatrix(content)
 	println(m.CountPositions())
 	m = NewMatrix(content)
