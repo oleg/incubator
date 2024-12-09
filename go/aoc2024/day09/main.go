@@ -1,7 +1,6 @@
 package main
 
 import (
-	//"fmt"
 	"github.com/oleg/incubator/aoc2024/misc"
 )
 
