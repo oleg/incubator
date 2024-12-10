@@ -112,6 +112,7 @@ const (
 	AppendRequestType RequestType = 0
 )
 
+// Append record to the distributed log and get the offset
 func (l *DistributedLog) Append(record *api.Record) (uint64, error) {
 	res, err := l.apply(AppendRequestType, &api.ProduceRequest{Record: record})
 	if err != nil {
@@ -194,7 +195,7 @@ func (l *DistributedLog) WaitForLeader(timeout time.Duration) error {
 		case <-timeoutC:
 			return fmt.Errorf("timed out")
 		case <-ticker.C:
-			if l, _ := l.raft.LeaderWithID(); l != "" {
+			if leader, _ := l.raft.LeaderWithID(); leader != "" {
 				return nil
 			}
 		}
