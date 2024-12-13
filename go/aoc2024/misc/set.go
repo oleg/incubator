@@ -19,3 +19,8 @@ func (s Set[E]) AddSet(s2 Set[E]) {
 		s[k] = struct{}{}
 	}
 }
+
+func (s Set[E]) Contains(e E) bool {
+	_, ok := s[e]
+	return ok
+}
