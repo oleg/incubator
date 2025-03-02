@@ -128,7 +128,11 @@ func (a *Agent) setupLog() error {
 
 func (a *Agent) setupServer() error {
 	authorizer := auth.New(a.Config.ACLModelFile, a.Config.ACLPolicyFile)
-	serverConfig := &server.Config{CommitLog: a.log, Authorizer: authorizer}
+	serverConfig := &server.Config{
+		CommitLog:   a.log,
+		Authorizer:  authorizer,
+		GetServerer: a.log,
+	}
 	var opts []grpc.ServerOption
 	if a.Config.ServerTLSConfig != nil {
 		creds := credentials.NewTLS(a.Config.ServerTLSConfig)
