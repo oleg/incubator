@@ -1,16 +1,19 @@
 package loadbalance
 
 import (
+	"context"
 	"fmt"
+	api "github.com/oleg/incubator/go/proglog/api/v1"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/attributes"
 	"google.golang.org/grpc/resolver"
 	"google.golang.org/grpc/serviceconfig"
 	"sync"
 )
 
 const Name = "proglog"
-var _ resolver.Builder = (*Resolver)(nil)
+
 type Resolver struct {
 	mu            sync.Mutex
 	clientConn    resolver.ClientConn
@@ -18,6 +21,8 @@ type Resolver struct {
 	serviceConfig *serviceconfig.ParseResult
 	logger        *zap.Logger
 }
+
+var _ resolver.Builder = (*Resolver)(nil)
 
 func (r *Resolver) Build(
 	target resolver.Target,
@@ -49,4 +54,36 @@ func (r *Resolver) Scheme() string {
 
 func init() {
 	resolver.Register(&Resolver{})
+}
+
+var _ resolver.Resolver = (*Resolver)(nil)
+
+func (r *Resolver) ResolveNow(resolver.ResolveNowOptions) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	client := api.NewLogClient(r.resolverConn)
+	ctx := context.Background()
+	res, err := client.GetServers(ctx, &api.GetServersRequest{})
+	if err != nil {
+		r.logger.Error("failed to resolve server", zap.Error(err))
+		return
+	}
+	var addrs []resolver.Address
+	for _, server := range res.Servers {
+		addrs = append(addrs, resolver.Address{
+			Addr:       server.RpcAddr,
+			Attributes: attributes.New("is_leader", server.IsLeader),
+		})
+	}
+	_ = r.clientConn.UpdateState(resolver.State{
+		Addresses:     addrs,
+		ServiceConfig: r.serviceConfig,
+	})
+}
+
+func (r *Resolver) Close() {
+	if err := r.resolverConn.Close(); err != nil {
+		r.logger.Error("failed to close conn", zap.Error(err))
+	}
 }
