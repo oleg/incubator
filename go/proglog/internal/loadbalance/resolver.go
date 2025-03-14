@@ -40,7 +40,7 @@ func (r *Resolver) Build(
 	)
 
 	var err error
-	r.resolverConn, err = grpc.Dial(target.Endpoint, dialOpts...)
+	r.resolverConn, err = grpc.Dial(target.URL.Host, dialOpts...)
 	if err != nil {
 		return nil, err
 	}
