@@ -5,20 +5,20 @@ import (
 	"mazes/maze"
 )
 
-func BinaryTree(grid *maze.Grid) {
+func BinaryTree(r *rand.Rand, grid *maze.Grid) {
 	grid.EachCells(func(cell *maze.Cell) {
-		if neighbor := chooseNeighbor(grid, cell); neighbor != nil {
+		if neighbor := chooseNeighbor(r, grid, cell); neighbor != nil {
 			cell.Link(neighbor)
 		}
 	})
 }
 
-func chooseNeighbor(grid *maze.Grid, cell *maze.Cell) *maze.Cell {
+func chooseNeighbor(r *rand.Rand, grid *maze.Grid, cell *maze.Cell) *maze.Cell {
 	north := grid.North(cell)
 	east := grid.East(cell)
 
 	if north != nil && east != nil {
-		if rand.Intn(2) == 0 {
+		if r.Intn(2) == 0 {
 			return north
 		}
 		return east

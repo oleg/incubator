@@ -10,10 +10,10 @@ import (
 )
 
 func Test_produces_sidewinder(t *testing.T) {
-	rand.Seed(42)
 	grid := maze.NewGrid(5, 5)
 
-	Sidewinder(grid)
+	r := rand.New(rand.NewSource(42))
+	Sidewinder(r, grid)
 
 	expected := dedent.Dedent(`
 	+---+---+---+---+---+
